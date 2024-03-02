@@ -3,4 +3,36 @@
 {% block title %}Register{% endblock %}
 
 {% block content %}
+
+<h1>Registration</h1>
+
+{% if first_name %}
+
+{% for message in get_flashed_messages() %}
+
+<div class="alert alert-dark alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+{% endfor %}
+
+{% else %}
+<form method="POST">
+    {{ form.hidden_tag() }}
+
+    {{ form.first_name.label(class="form-label") }}
+    {{ form.first_name(class="form-control") }}
+    <br>
+    {{ form.last_name.label(class="form-label") }}
+    {{ form.last_name(class="form-control") }}
+    <br>
+    {{ form.email.label(class="form-label") }}
+    {{ form.email(class="form-control") }}
+    <br>
+    {{ form.submit(class="btn btn-dark") }}
+</form>
+
+{% endif%}
+
 {% endblock %}
