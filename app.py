@@ -9,7 +9,11 @@ import os
 load_dotenv()
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
+# MYSQL db
+mysql_pass = os.getenv("MYSQL_PASS")
+app.config["SQLALCHEMY_DATABASE_URI"] = (
+    f"mysql+pymysql://root:{mysql_pass}@localhost/jurgenst_flask_users"
+)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.app_context().push()
 
