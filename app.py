@@ -1,10 +1,9 @@
-from flask import Flask, render_template, flash
+from flask import Flask, render_template, flash, request
+from flask_migrate import Migrate
 from forms.register_form import RegisterForm
-from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
-from datetime import datetime
 import os
-
+from database.users import Users, db
 
 load_dotenv()
 
@@ -17,19 +16,8 @@ app.config["SQLALCHEMY_DATABASE_URI"] = (
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.app_context().push()
 
-db = SQLAlchemy(app)
-
-
-# create model
-class Users(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(100), nullable=False)
-    last_name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), nullable=False, unique=True)
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
-
-    def __repr__(self):
-        return "<Name %r>" % self.first_name
+db.init_app(app)  # Initialize db with the Flask app
+migrate = Migrate(app, db)
 
 
 @app.route("/")
@@ -48,9 +36,11 @@ def register():
     if form.validate_on_submit():
         user = Users.query.filter_by(email=form.email.data).first()
         if user is None:
+            full_name = form.first_name.data + " " + form.last_name.data
             user = Users(
                 first_name=form.first_name.data,
                 last_name=form.last_name.data,
+                full_name=full_name,
                 email=form.email.data,
             )
             db.session.add(user)
@@ -77,6 +67,29 @@ def register():
         form=form,
         our_users=our_users,
     )
+
+
+@app.route("/update/<int:id>", methods=["GET", "POST"])
+def update(id):
+    form = RegisterForm()
+    user_to_update = Users.query.get_or_404(id)
+    if request.method == "POST":
+        user_to_update.first_name = request.form["first_name"]
+        user_to_update.last_name = request.form["last_name"]
+        user_to_update.email = request.form["email"]
+        try:
+            db.session.commit()
+            flash("User Updated Successfully!")
+            return render_template(
+                "update.html", form=form, user_to_update=user_to_update
+            )
+        except:
+            flash("Error! Looks like there was a problem.... Try Again!")
+            return render_template(
+                "update.html", form=form, user_to_update=user_to_update
+            )
+    else:
+        return render_template("update.html", form=form, user_to_update=user_to_update)
 
 
 if __name__ == "__main__":
