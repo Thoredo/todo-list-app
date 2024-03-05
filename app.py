@@ -89,7 +89,24 @@ def update(id):
                 "update.html", form=form, user_to_update=user_to_update
             )
     else:
-        return render_template("update.html", form=form, user_to_update=user_to_update)
+        return render_template(
+            "update.html", form=form, user_to_update=user_to_update, id=id
+        )
+
+
+@app.route("/delete/<int:id>", methods=["GET", "POST"])
+def delete(id):
+    user_to_delete = Users.query.get_or_404(id)
+
+    try:
+        db.session.delete(user_to_delete)
+        db.session.commit()
+        flash("User Deleted Successfully!!")
+
+        return render_template("/delete.html")
+    except:
+        flash("Error! Looks like there was a problem.... Try Again!")
+        return render_template("/delete.html")
 
 
 if __name__ == "__main__":

@@ -28,6 +28,8 @@
         {{ form.email(class="form-control", value=user_to_update.email) }}
         <br>
         {{ form.submit(class="btn btn-dark") }}
+
+        <a href="{{ url_for('delete',id=id) }}" class="btn btn-danger">Delete</a>
     </form>
 </div>
 {% endblock %}
