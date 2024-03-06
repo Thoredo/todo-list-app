@@ -4,6 +4,7 @@ from forms.register_form import RegisterForm
 from dotenv import load_dotenv
 import os
 from database.users import Users, db
+from werkzeug.security import generate_password_hash, check_password_hash
 
 load_dotenv()
 
@@ -16,7 +17,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = (
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.app_context().push()
 
-db.init_app(app)  # Initialize db with the Flask app
+db.init_app(app)
 migrate = Migrate(app, db)
 
 
@@ -37,11 +38,17 @@ def register():
         user = Users.query.filter_by(email=form.email.data).first()
         if user is None:
             full_name = form.first_name.data + " " + form.last_name.data
+            # Hash password
+            hashed_pw = generate_password_hash(
+                form.password_hash.data, method="pbkdf2:sha256"
+            )
+
             user = Users(
                 first_name=form.first_name.data,
                 last_name=form.last_name.data,
                 full_name=full_name,
                 email=form.email.data,
+                password_hash=hashed_pw,
             )
             db.session.add(user)
             db.session.commit()
@@ -49,14 +56,10 @@ def register():
         else:
             flash("Email adress already in use")
 
-        first_name = form.first_name.data
         form.first_name.data = ""
-
-        last_name = form.last_name.data
         form.last_name.data = ""
-
-        email = form.email.data
         form.email.data = ""
+        form.password_hash.data = ""
 
     our_users = Users.query.order_by(Users.date_added)
     return render_template(
