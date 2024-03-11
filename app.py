@@ -1,6 +1,7 @@
 from flask import Flask, render_template, flash, request
 from flask_migrate import Migrate
 from forms.register_form import RegisterForm
+from forms.test_login import PasswordForm
 from dotenv import load_dotenv
 import os
 from database.users import Users, db
@@ -110,6 +111,37 @@ def delete(id):
     except:
         flash("Error! Looks like there was a problem.... Try Again!")
         return render_template("/delete.html")
+
+
+@app.route("/test_login.html", methods=["GET", "POST"])
+def test_login():
+    email = None
+    password = None
+    user_to_check = None
+    passed = None
+    form = PasswordForm()
+
+    if form.validate_on_submit():
+        email = form.email.data
+        password = form.password_hash.data
+
+        form.email.data = ""
+        form.password_hash.data = ""
+
+        # Lookup user
+        user_to_check = Users.query.filter_by(email=email).first()
+
+        # Check hashed password
+        passed = check_password_hash(user_to_check.password_hash, password)
+
+    return render_template(
+        "/test_login.html",
+        email=email,
+        password=password,
+        user_to_check=user_to_check,
+        passed=passed,
+        form=form,
+    )
 
 
 if __name__ == "__main__":
