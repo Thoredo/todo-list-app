@@ -1,7 +1,15 @@
-from flask import Flask, render_template, flash, request
+from flask import Flask, render_template, flash, request, redirect, url_for
 from flask_migrate import Migrate
+from flask_login import (
+    UserMixin,
+    login_user,
+    login_required,
+    logout_user,
+    current_user,
+    LoginManager,
+)
 from forms.register_form import RegisterForm
-from forms.test_login import PasswordForm
+from forms.login import LoginForm
 from dotenv import load_dotenv
 import os
 from database.users import Users, db
@@ -21,13 +29,23 @@ app.app_context().push()
 db.init_app(app)
 migrate = Migrate(app, db)
 
+# Flask_login stuff
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Users.query.get(int(user_id))
+
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
 
-@app.route("/register.html", methods=["GET", "POST"])
+@app.route("/register", methods=["GET", "POST"])
 def register():
     first_name = None
     last_name = None
@@ -47,6 +65,7 @@ def register():
             user = Users(
                 first_name=form.first_name.data,
                 last_name=form.last_name.data,
+                username=form.username.data,
                 full_name=full_name,
                 email=form.email.data,
                 password_hash=hashed_pw,
@@ -59,6 +78,7 @@ def register():
 
         form.first_name.data = ""
         form.last_name.data = ""
+        form.username.data = ""
         form.email.data = ""
         form.password_hash.data = ""
 
@@ -113,35 +133,42 @@ def delete(id):
         return render_template("/delete.html")
 
 
-@app.route("/test_login.html", methods=["GET", "POST"])
-def test_login():
-    email = None
-    password = None
-    user_to_check = None
-    passed = None
-    form = PasswordForm()
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = LoginForm()
 
     if form.validate_on_submit():
-        email = form.email.data
-        password = form.password_hash.data
-
-        form.email.data = ""
-        form.password_hash.data = ""
-
         # Lookup user
-        user_to_check = Users.query.filter_by(email=email).first()
-
-        # Check hashed password
-        passed = check_password_hash(user_to_check.password_hash, password)
+        user = Users.query.filter_by(username=form.username.data).first()
+        if user:
+            # Check the hash
+            if check_password_hash(user.password_hash, form.password.data):
+                login_user(user)
+                return redirect(url_for("account"))
+            else:
+                flash("Wrong Password - Try Again!")
+        else:
+            flash("That Username Doesn't Exist! Try Again!")
 
     return render_template(
-        "/test_login.html",
-        email=email,
-        password=password,
-        user_to_check=user_to_check,
-        passed=passed,
+        "/login.html",
         form=form,
     )
+
+
+@app.route("/logout", methods=["GET", "POST"])
+@login_required
+def logout():
+    logout_user()
+    flash("You Logged Out!")
+    return redirect(url_for("login"))
+
+
+@app.route("/account", methods=["GET", "POST"])
+@login_required
+def account():
+
+    return render_template("account.html")
 
 
 if __name__ == "__main__":

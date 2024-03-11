@@ -1,12 +1,13 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-
+from flask_login import UserMixin
 
 db = SQLAlchemy()
 
 
-class Users(db.Model):
+class Users(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), nullable=False, unique=True)
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
     full_name = db.Column(db.String(100), nullable=False)

@@ -24,6 +24,9 @@
         {{ form.last_name.label(class="form-label") }}
         {{ form.last_name(class="form-control") }}
         <br>
+        {{ form.username.label(class="form-label") }}
+        {{ form.username(class="form-control") }}
+        <br>
         {{ form.email.label(class="form-label") }}
         {{ form.email(class="form-control") }}
         <br>
@@ -41,9 +44,8 @@
     {% for our_user in our_users %}
     <tr>
         <td>
-            {{ our_user.id }}. <a href="{{ url_for('update',id=our_user.id) }}">{{ our_user.first_name }}</a> - {{
-            our_user.last_name }} - {{ our_user.email }} - {{ our_user.full_name }} - <a
-                href="{{ url_for('delete',id=our_user.id) }}">Delete</a>
+            {{ our_user.id }}. <a href="{{ url_for('update',id=our_user.id) }}">{{ our_user.full_name }}</a> - {{
+            our_user.email }} - {{ our_user.username }} - <a href="{{ url_for('delete',id=our_user.id) }}">Delete</a>
         </td>
     </tr>
     {% endfor %}
