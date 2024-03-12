@@ -42,7 +42,9 @@ def load_user(user_id):
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    active_page = "index"
+
+    return render_template("index.html", active_page=active_page)
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -51,6 +53,7 @@ def register():
     last_name = None
     email = None
     form = RegisterForm()
+    active_page = "register"
 
     # Validate form
     if form.validate_on_submit():
@@ -90,6 +93,7 @@ def register():
         email=email,
         form=form,
         our_users=our_users,
+        active_page=active_page,
     )
 
 
@@ -136,6 +140,7 @@ def delete(id):
 @app.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
+    active_page = "login"
 
     if form.validate_on_submit():
         # Lookup user
@@ -150,10 +155,7 @@ def login():
         else:
             flash("That Username Doesn't Exist! Try Again!")
 
-    return render_template(
-        "/login.html",
-        form=form,
-    )
+    return render_template("/login.html", form=form, active_page=active_page)
 
 
 @app.route("/logout", methods=["GET", "POST"])
@@ -167,8 +169,9 @@ def logout():
 @app.route("/account", methods=["GET", "POST"])
 @login_required
 def account():
+    active_page = "account"
 
-    return render_template("account.html")
+    return render_template("account.html", active_page=active_page)
 
 
 if __name__ == "__main__":
