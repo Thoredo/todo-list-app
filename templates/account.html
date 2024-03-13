@@ -14,9 +14,31 @@
 {% endfor %}
 
 <br>
-<h1>You are logged in!</h1>
-<br><br><br>
+<h1>Account</h1>
+<br>
 
-<a href="{{ url_for('logout') }}" class="btn btn-dark">Logout</a>
+<div class="card">
+    <div class="card-header">
+        {{ current_user.full_name }}
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">Welcome to you account page.</h5>
+        <p class="card-text"><strong>First Name:</strong> {{ current_user.first_name }} <br>
+            <strong>Last Name:</strong> {{ current_user.last_name }} <br>
+            <strong>Username:</strong> {{ current_user.username }} <br>
+            <strong>Email:</strong> {{ current_user.email }} <br>
+            <strong>Date Joined:</strong> {{ current_user.date_added }} <br>
+        </p>
+        <a href="{{ url_for('logout') }}" class="btn btn-dark">Logout</a>
+        <a href="{{ url_for('update', id=current_user.id) }}" class="btn btn-dark">Edit Profile</a>
+        <a href="{{ url_for('delete',id=current_user.id) }}" class="btn btn-danger">Delete</a>
+    </div>
+</div>
+
+
+
+<br><br><br><br>
+
+
 
 {% endblock %}

@@ -98,6 +98,7 @@ def register():
 
 
 @app.route("/update/<int:id>", methods=["GET", "POST"])
+@login_required
 def update(id):
     form = RegisterForm()
     user_to_update = Users.query.get_or_404(id)

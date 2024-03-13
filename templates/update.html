@@ -15,21 +15,21 @@
 
 {% endfor %}
 <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
-    <form action="/update/{{ user_to_update.id }}" method="POST">
+    <form action="/update/{{ current_user.id }}" method="POST">
         {{ form.hidden_tag() }}
 
         {{ form.first_name.label(class="form-label") }}
-        {{ form.first_name(class="form-control", value=user_to_update.first_name) }}
+        {{ form.first_name(class="form-control", value=current_user.first_name) }}
         <br>
         {{ form.last_name.label(class="form-label") }}
-        {{ form.last_name(class="form-control", value=user_to_update.last_name) }}
+        {{ form.last_name(class="form-control", value=current_user.last_name) }}
         <br>
         {{ form.email.label(class="form-label") }}
-        {{ form.email(class="form-control", value=user_to_update.email) }}
+        {{ form.email(class="form-control", value=current_user.email) }}
         <br>
         {{ form.submit(class="btn btn-dark") }}
 
-        <a href="{{ url_for('delete',id=id) }}" class="btn btn-danger">Delete</a>
+        <a href="{{ url_for('delete',id=current_user.id) }}" class="btn btn-danger">Delete</a>
     </form>
 </div>
 {% endblock %}
