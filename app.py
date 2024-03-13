@@ -40,11 +40,63 @@ def load_user(user_id):
     return Users.query.get(int(user_id))
 
 
+@app.route("/account", methods=["GET", "POST"])
+@login_required
+def account():
+    active_page = "account"
+
+    return render_template("account.html", active_page=active_page)
+
+
+@app.route("/delete/<int:id>", methods=["GET", "POST"])
+def delete(id):
+    user_to_delete = Users.query.get_or_404(id)
+
+    try:
+        db.session.delete(user_to_delete)
+        db.session.commit()
+        flash("User Deleted Successfully!!")
+
+        return render_template("/delete.html")
+    except:
+        flash("Error! Looks like there was a problem.... Try Again!")
+        return render_template("/delete.html")
+
+
 @app.route("/")
 def index():
     active_page = "index"
 
     return render_template("index.html", active_page=active_page)
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    active_page = "login"
+
+    if form.validate_on_submit():
+        # Lookup user
+        user = Users.query.filter_by(username=form.username.data).first()
+        if user:
+            # Check the hash
+            if check_password_hash(user.password_hash, form.password.data):
+                login_user(user)
+                return redirect(url_for("account"))
+            else:
+                flash("Wrong Password - Try Again!")
+        else:
+            flash("That Username Doesn't Exist! Try Again!")
+
+    return render_template("/login.html", form=form, active_page=active_page)
+
+
+@app.route("/logout", methods=["GET", "POST"])
+@login_required
+def logout():
+    logout_user()
+    flash("You Logged Out!")
+    return redirect(url_for("login"))
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -121,58 +173,6 @@ def update(id):
         return render_template(
             "update.html", form=form, user_to_update=user_to_update, id=id
         )
-
-
-@app.route("/delete/<int:id>", methods=["GET", "POST"])
-def delete(id):
-    user_to_delete = Users.query.get_or_404(id)
-
-    try:
-        db.session.delete(user_to_delete)
-        db.session.commit()
-        flash("User Deleted Successfully!!")
-
-        return render_template("/delete.html")
-    except:
-        flash("Error! Looks like there was a problem.... Try Again!")
-        return render_template("/delete.html")
-
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    form = LoginForm()
-    active_page = "login"
-
-    if form.validate_on_submit():
-        # Lookup user
-        user = Users.query.filter_by(username=form.username.data).first()
-        if user:
-            # Check the hash
-            if check_password_hash(user.password_hash, form.password.data):
-                login_user(user)
-                return redirect(url_for("account"))
-            else:
-                flash("Wrong Password - Try Again!")
-        else:
-            flash("That Username Doesn't Exist! Try Again!")
-
-    return render_template("/login.html", form=form, active_page=active_page)
-
-
-@app.route("/logout", methods=["GET", "POST"])
-@login_required
-def logout():
-    logout_user()
-    flash("You Logged Out!")
-    return redirect(url_for("login"))
-
-
-@app.route("/account", methods=["GET", "POST"])
-@login_required
-def account():
-    active_page = "account"
-
-    return render_template("account.html", active_page=active_page)
 
 
 if __name__ == "__main__":
