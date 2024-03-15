@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Lists{% endblock %}
+
+{% block content %}
+
+{% for message in get_flashed_messages() %}
+
+<div class="alert alert-dark alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+{% endfor %}
+<br><br><br><br>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="card" style="width: 18rem;">
+                <img src="/static/images/personal.png" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">Personal Lists</h5>
+                    <p class="card-text">Edit, view or remove your personal lists.</p>
+                    <a href="#" class="btn btn-primary">Personal Lists</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card" style="width: 18rem;">
+                <img src="/static/images/group.png" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">Shared Lists</h5>
+                    <p class="card-text">Edit, view or remove your personal lists.</p>
+                    <a href="#" class="btn btn-primary">Shared Lists</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card" style="width: 18rem;">
+                <img src="/static/images/add-list.png" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">New List</h5>
+                    <p class="card-text">Add a new personal or group list to your account.</p>
+                    <a href="#" class="btn btn-primary">New list</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -70,6 +70,11 @@ def index():
     return render_template("index.html", active_page=active_page)
 
 
+@app.route("/lists")
+def lists():
+    return render_template("/lists.html")
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
@@ -88,7 +93,7 @@ def login():
         else:
             flash("That Username Doesn't Exist! Try Again!")
 
-    return render_template("/login.html", form=form, active_page=active_page)
+    return render_template("login.html", form=form, active_page=active_page)
 
 
 @app.route("/logout", methods=["GET", "POST"])
