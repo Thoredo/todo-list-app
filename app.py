@@ -5,12 +5,14 @@ from flask_login import (
     login_required,
     logout_user,
     LoginManager,
+    current_user,
 )
 from forms.register_form import RegisterForm
 from forms.login import LoginForm
+from forms.new_list import NewListForm
 from dotenv import load_dotenv
 import os
-from database.tables import Users, db
+from database.tables import Users, Lists, db
 from werkzeug.security import generate_password_hash, check_password_hash
 
 load_dotenv()
@@ -102,10 +104,17 @@ def logout():
     return redirect(url_for("login"))
 
 
-@app.route("/lists/new_list")
+@app.route("/lists/new_list", methods=["GET", "POST"])
 @login_required
 def new_list():
-    return render_template("new_list.html")
+    form = NewListForm()
+    if form.validate_on_submit():
+        creator = current_user.id
+        list = Lists(list_name=form.list_name.data, list_owner_id=creator)
+        db.session.add(list)
+        db.session.commit()
+        flash("List Created!")
+    return render_template("new_list.html", form=form)
 
 
 @app.route("/register", methods=["GET", "POST"])
