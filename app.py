@@ -162,7 +162,7 @@ def update(id):
             db.session.commit()
             flash("User Updated Successfully!")
             return render_template(
-                "update.html", form=form, user_to_update=user_to_update
+                "update.html", form=form, user_to_update=user_to_update, id=id
             )
         except:
             flash("Error! Looks like there was a problem.... Try Again!")

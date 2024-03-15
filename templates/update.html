@@ -14,22 +14,32 @@
 </div>
 
 {% endfor %}
+
+{% if id == current_user.id %}
+
 <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
     <form action="/update/{{ current_user.id }}" method="POST">
         {{ form.hidden_tag() }}
 
         {{ form.first_name.label(class="form-label") }}
-        {{ form.first_name(class="form-control", value=current_user.first_name) }}
+        {{ form.first_name(class="form-control", value=user_to_update.first_name) }}
         <br>
         {{ form.last_name.label(class="form-label") }}
-        {{ form.last_name(class="form-control", value=current_user.last_name) }}
+        {{ form.last_name(class="form-control", value=user_to_update.last_name) }}
         <br>
         {{ form.email.label(class="form-label") }}
-        {{ form.email(class="form-control", value=current_user.email) }}
+        {{ form.email(class="form-control", value=user_to_update.email) }}
         <br>
         {{ form.submit(class="btn btn-dark") }}
 
-        <a href="{{ url_for('delete',id=current_user.id) }}" class="btn btn-danger">Delete</a>
+        <a href="{{ url_for('delete',id=user_to_update.id) }}" class="btn btn-danger">Delete</a>
     </form>
 </div>
+{% else %}
+<div class="alert alert-dark alert-dismissible fade show" role="alert">
+    Sorry! You Can't Edit This User...
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+{% endif %}
 {% endblock %}
