@@ -1,18 +1,16 @@
 from flask import Flask, render_template, flash, request, redirect, url_for
 from flask_migrate import Migrate
 from flask_login import (
-    UserMixin,
     login_user,
     login_required,
     logout_user,
-    current_user,
     LoginManager,
 )
 from forms.register_form import RegisterForm
 from forms.login import LoginForm
 from dotenv import load_dotenv
 import os
-from database.users import Users, db
+from database.tables import Users, db
 from werkzeug.security import generate_password_hash, check_password_hash
 
 load_dotenv()
@@ -102,6 +100,12 @@ def logout():
     logout_user()
     flash("You Logged Out!")
     return redirect(url_for("login"))
+
+
+@app.route("/lists/new_list")
+@login_required
+def new_list():
+    return render_template("new_list.html")
 
 
 @app.route("/register", methods=["GET", "POST"])
