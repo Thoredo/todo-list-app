@@ -50,3 +50,8 @@ class GroupMembers(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     group_id = db.Column(db.Integer, db.ForeignKey("list_groups.group_id"))
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+
+
+class Tasks(db.Model):
+
+    task_id = db.Column(db.Integer, primary_key=True)
