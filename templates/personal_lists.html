@@ -18,7 +18,7 @@
     <th scope="col">Active Tasks</th>
     {% for list in lists %}
     <tr>
-        <td><a href="#">{{ list.list_name }}</a></td>
+        <td><a href="{{ url_for('view_list',list_id=list.list_id) }}">{{ list.list_name }}</a></td>
         <td>0</td>
     </tr>
     {% endfor %}

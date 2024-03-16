@@ -40,6 +40,12 @@ def load_user(user_id):
     return Users.query.get(int(user_id))
 
 
+@app.route("/lists/<int:list_id>/add_task")
+@login_required
+def add_task(list_id):
+    pass
+
+
 @app.route("/account", methods=["GET", "POST"])
 @login_required
 def account():
@@ -214,6 +220,14 @@ def update(id):
         return render_template(
             "update.html", form=form, user_to_update=user_to_update, id=id
         )
+
+
+@app.route("/lists/<int:list_id>")
+@login_required
+def view_list(list_id):
+    list = Lists.query.get(list_id)
+    group = GroupMembers.query.filter_by(group_id=list.group_id)
+    return render_template("view_list.html", list=list, group=group)
 
 
 if __name__ == "__main__":
