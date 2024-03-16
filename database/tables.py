@@ -32,10 +32,12 @@ class Lists(db.Model):
     list_id = db.Column(db.Integer, primary_key=True)
     list_name = db.Column(db.String(100), nullable=False)
     list_owner_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    group_id = db.Column(db.Integer, db.ForeignKey("groups.group_id"))
+    group_id = db.Column(db.Integer, db.ForeignKey("list_groups.group_id"))
 
 
 class Groups(db.Model):
+    __tablename__ = "list_groups"
+
     group_id = db.Column(db.Integer, primary_key=True)
 
     connected_list = db.relationship("Lists", backref="group")
@@ -46,5 +48,5 @@ class GroupMembers(db.Model):
     __tablename__ = "group_members"
 
     id = db.Column(db.Integer, primary_key=True)
-    group_id = db.Column(db.Integer, db.ForeignKey("groups.group_id"))
+    group_id = db.Column(db.Integer, db.ForeignKey("list_groups.group_id"))
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
