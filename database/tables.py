@@ -16,8 +16,8 @@ class Users(db.Model, UserMixin):
 
     password_hash = db.Column(db.String(128))
 
-    # User can have many lists
     lists = db.relationship("Lists", backref="creator")
+    groups = db.relationship("GroupMembers", backref="group")
 
     @property
     def password(self):
@@ -28,7 +28,23 @@ class Users(db.Model, UserMixin):
 
 
 class Lists(db.Model):
-    # Add later list_name and group_id
+    # Add later group_id
     list_id = db.Column(db.Integer, primary_key=True)
     list_name = db.Column(db.String(100), nullable=False)
     list_owner_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    group_id = db.Column(db.Integer, db.ForeignKey("groups.group_id"))
+
+
+class Groups(db.Model):
+    group_id = db.Column(db.Integer, primary_key=True)
+
+    connected_list = db.relationship("Lists", backref="group")
+    members = db.relationship("GroupMembers", backref="member")
+
+
+class GroupMembers(db.Model):
+    __tablename__ = "group_members"
+
+    id = db.Column(db.Integer, primary_key=True)
+    group_id = db.Column(db.Integer, db.ForeignKey("groups.group_id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
