@@ -12,7 +12,7 @@ from forms.login import LoginForm
 from forms.new_list import NewListForm
 from dotenv import load_dotenv
 import os
-from database.tables import Users, Lists, db
+from database.tables import Users, Lists, Groups, GroupMembers, Tasks, db
 from werkzeug.security import generate_password_hash, check_password_hash
 
 load_dotenv()
@@ -109,9 +109,25 @@ def logout():
 def new_list():
     form = NewListForm()
     if form.validate_on_submit():
+        # Create new group
+        new_group = Groups()
+        db.session.add(new_group)
+        db.session.commit()
+
+        # Add creator as first member
+        group_member = GroupMembers(
+            group_id=new_group.group_id, user_id=current_user.id
+        )
+        db.session.add(group_member)
+        db.session.commit()
+
         creator = current_user.id
-        list = Lists(list_name=form.list_name.data, list_owner_id=creator)
-        db.session.add(list)
+        new_list = Lists(
+            list_name=form.list_name.data,
+            list_owner_id=creator,
+            group_id=new_group.group_id,
+        )
+        db.session.add(new_list)
         db.session.commit()
         flash("List Created!")
     return render_template("new_list.html", form=form)
