@@ -117,6 +117,13 @@ def new_list():
     return render_template("new_list.html", form=form)
 
 
+@app.route("/lists/personal_lists")
+@login_required
+def personal_lists():
+    lists = Lists.query.filter_by(list_owner_id=current_user.id)
+    return render_template("personal_lists.html", lists=lists)
+
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     first_name = None
