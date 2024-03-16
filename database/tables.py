@@ -55,3 +55,11 @@ class GroupMembers(db.Model):
 class Tasks(db.Model):
 
     task_id = db.Column(db.Integer, primary_key=True)
+    list_id = db.Column(db.Integer, db.ForeignKey("lists.list_id"))
+    task_name = db.Column(db.String(100), nullable=False)
+    created_at = db.Column(
+        db.DateTime, default=datetime.now(timezone.utc), nullable=False
+    )
+    finished = db.Column(db.Boolean, default=False, nullable=False)
+    priority = db.Column(db.String(50), nullable=False)
+    due_date = db.Column(db.DateTime)
