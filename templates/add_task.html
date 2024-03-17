@@ -13,7 +13,8 @@
 
 {% endfor %}
 
-{% if list.list_owner_id == current_user.id %}
+{% for member in group %}
+{% if member.user_id == current_user.id %}
 <br><br><br>
 <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
     <form method="POST">
@@ -39,5 +40,6 @@
 </div>
 
 {% endif %}
+{% endfor %}
 
 {% endblock %}

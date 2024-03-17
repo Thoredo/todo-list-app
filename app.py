@@ -48,7 +48,7 @@ def load_user(user_id):
 def add_task(list_id):
     form = AddTaskForm()
     list = Lists.query.get(list_id)
-
+    group = GroupMembers.query.filter_by(group_id=list.group_id)
     if form.validate_on_submit():
         new_task = Tasks(
             list_id=list_id,
@@ -65,7 +65,7 @@ def add_task(list_id):
 
         flash("Task Added!")
         return redirect(url_for("view_list", list_id=list_id))
-    return render_template("add_task.html", form=form, list=list)
+    return render_template("add_task.html", form=form, list=list, group=group)
 
 
 @app.route("/lists/<int:list_id>/<int:task_id>/edit", methods=["GET", "POST"])
@@ -73,6 +73,8 @@ def add_task(list_id):
 def edit_task(list_id, task_id):
     form = EditTaskForm()
     task_to_edit = Tasks.query.get_or_404(task_id)
+    list = Lists.query.get(list_id)
+    group = GroupMembers.query.filter_by(group_id=list.group_id)
     if request.method == "POST":
         task_to_edit.task_name = request.form["task_name"]
         task_to_edit.priority = request.form["priority"]
@@ -93,6 +95,7 @@ def edit_task(list_id, task_id):
                 list_id=list_id,
                 task_id=task_id,
                 task_to_edit=task_to_edit,
+                group=group,
             )
     return render_template(
         "edit_task.html",
@@ -100,6 +103,7 @@ def edit_task(list_id, task_id):
         list_id=list_id,
         task_id=task_id,
         task_to_edit=task_to_edit,
+        group=group,
     )
 
 

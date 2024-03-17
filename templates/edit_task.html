@@ -15,7 +15,8 @@
 
 <br><br><br>
 
-
+{% for member in group %}
+{% if member.user_id == current_user.id %}
 <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
     <form action="/lists/{{ list_id }}/{{ task_id }}/edit" method="POST">
         {{ form.hidden_tag() }}
@@ -35,5 +36,14 @@
         {{ form.submit(class="btn btn-dark") }}
     </form>
 </div>
+{% else %}
+<br><br><br><br>
+<div class="alert alert-dark alert-dismissible fade show" role="alert">
+    Either this task does not exist, or you don't have permission to edit this task.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+{% endif %}
+{% endfor %}
 
 {% endblock %}
