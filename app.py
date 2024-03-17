@@ -264,8 +264,17 @@ def new_list():
 @app.route("/lists/personal_lists")
 @login_required
 def personal_lists():
+    lists_with_active_tasks = []
     lists = Lists.query.filter_by(list_owner_id=current_user.id)
-    return render_template("personal_lists.html", lists=lists)
+    for list in lists:
+        active_tasks_count = Tasks.query.filter_by(
+            list_id=list.list_id, finished=False
+        ).count()
+        lists_with_active_tasks.append((list, active_tasks_count))
+    return render_template(
+        "personal_lists.html",
+        lists_with_active_tasks=lists_with_active_tasks,
+    )
 
 
 @app.route("/register", methods=["GET", "POST"])

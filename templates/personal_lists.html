@@ -16,10 +16,10 @@
 <table class="table table-striped table-hover">
     <th scope="col">List Name</th>
     <th scope="col">Active Tasks</th>
-    {% for list in lists %}
+    {% for list, active_tasks_count in lists_with_active_tasks %}
     <tr>
-        <td><a href="{{ url_for('view_list',list_id=list.list_id) }}">{{ list.list_name }}</a></td>
-        <td>0</td>
+        <td><a href="{{ url_for('view_list', list_id=list.list_id) }}">{{ list.list_name }}</a></td>
+        <td>{{ active_tasks_count }}</td>
     </tr>
     {% endfor %}
 </table>
