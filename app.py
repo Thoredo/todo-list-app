@@ -77,7 +77,7 @@ def account():
 
 
 @app.route("/delete/<int:id>", methods=["GET", "POST"])
-def delete(id):
+def delete_account(id):
     user_to_delete = Users.query.get_or_404(id)
 
     try:
