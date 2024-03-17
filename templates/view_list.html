@@ -21,9 +21,22 @@
     <th scope="col">Due Date</th>
     <th scope="col">Status</th>
     <th scope="col"></th>
+    {% for task in tasks %}
     <tr>
+        <td>{{ task.task_name }}</td>
+        <td>{{ task.priority }}</td>
+        <td>{{ task.due_date.strftime('%Y-%m-%d')}}</td>
+        <td>{% if task.finished %}
+            <p class="btn btn-success">Finished</p>
+            {% elif task.due_date.date() >= today %}
+            <p class="btn btn-info">In Progress</p>
+            {% else %}
+            <p class="btn btn-danger">Past Due</p>
+            {% endif %}
+        </td>
         <td><a href="#" class="btn btn-dark">Edit</a></td>
     </tr>
+    {% endfor %}
 </table>
 
 <a href="{{ url_for('add_task', list_id=list_id) }}" class="btn btn-dark">Add Task</a>

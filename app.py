@@ -247,7 +247,17 @@ def update(id):
 def view_list(list_id):
     list = Lists.query.get(list_id)
     group = GroupMembers.query.filter_by(group_id=list.group_id)
-    return render_template("view_list.html", list=list, group=group, list_id=list_id)
+    tasks = Tasks.query.filter_by(list_id=list.list_id)
+    date = datetime.now()
+    today = date.date()
+    return render_template(
+        "view_list.html",
+        list=list,
+        group=group,
+        list_id=list_id,
+        tasks=tasks,
+        today=today,
+    )
 
 
 if __name__ == "__main__":
