@@ -26,7 +26,7 @@
     </tr>
 </table>
 
-<a href="#" class="btn btn-dark">Add Task</a>
+<a href="{{ url_for('add_task', list_id=list_id) }}" class="btn btn-dark">Add Task</a>
 {% else %}
 
 <div class="alert alert-dark alert-dismissible fade show" role="alert">

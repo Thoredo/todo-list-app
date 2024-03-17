@@ -10,8 +10,10 @@ from flask_login import (
 from forms.register_form import RegisterForm
 from forms.login import LoginForm
 from forms.new_list import NewListForm
+from forms.add_task import AddTaskForm
 from dotenv import load_dotenv
 import os
+from datetime import datetime
 from database.tables import Users, Lists, Groups, GroupMembers, Tasks, db
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -40,10 +42,28 @@ def load_user(user_id):
     return Users.query.get(int(user_id))
 
 
-@app.route("/lists/<int:list_id>/add_task")
+@app.route("/lists/<int:list_id>/add_task", methods=["GET", "POST"])
 @login_required
 def add_task(list_id):
-    pass
+    form = AddTaskForm()
+    list = Lists.query.get(list_id)
+
+    if form.validate_on_submit():
+        new_task = Tasks(
+            list_id=list_id,
+            task_name=form.task_name.data,
+            created_at=datetime.now(),
+            priority=form.priority.data,
+            due_date=form.due_date.data,
+        )
+        db.session.add(new_task)
+        db.session.commit()
+
+        form.task_name.data = ""
+        form.priority.data = ""
+
+        flash("Task Added!")
+    return render_template("add_task.html", form=form, list=list)
 
 
 @app.route("/account", methods=["GET", "POST"])
@@ -227,7 +247,7 @@ def update(id):
 def view_list(list_id):
     list = Lists.query.get(list_id)
     group = GroupMembers.query.filter_by(group_id=list.group_id)
-    return render_template("view_list.html", list=list, group=group)
+    return render_template("view_list.html", list=list, group=group, list_id=list_id)
 
 
 if __name__ == "__main__":
