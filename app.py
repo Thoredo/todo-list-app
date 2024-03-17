@@ -11,6 +11,7 @@ from forms.register_form import RegisterForm
 from forms.login import LoginForm
 from forms.new_list import NewListForm
 from forms.add_task import AddTaskForm
+from forms.edit_tasks import EditTaskForm
 from dotenv import load_dotenv
 import os
 from datetime import datetime
@@ -66,6 +67,73 @@ def add_task(list_id):
     return render_template("add_task.html", form=form, list=list)
 
 
+@app.route("/lists/<int:list_id>/<int:task_id>/edit", methods=["GET", "POST"])
+@login_required
+def edit_task(list_id, task_id):
+    form = EditTaskForm()
+    task_to_edit = Tasks.query.get_or_404(task_id)
+    if request.method == "POST":
+        task_to_edit.task_name = request.form["task_name"]
+        task_to_edit.priority = request.form["priority"]
+        task_to_edit.due_date = request.form["due_date"]
+        if request.form["finished"] == "True":
+            task_to_edit.finished = True
+        else:
+            task_to_edit.finished = False
+        try:
+            db.session.commit()
+            flash("Task Updated Successfully!")
+            return render_template(
+                "edit_task.html",
+                form=form,
+                list_id=list_id,
+                task_id=task_id,
+                task_to_edit=task_to_edit,
+            )
+        except:
+            flash("Error! Looks like there was a problem.... Try Again!")
+            return render_template(
+                "edit_task.html",
+                form=form,
+                list_id=list_id,
+                task_id=task_id,
+                task_to_edit=task_to_edit,
+            )
+    return render_template(
+        "edit_task.html",
+        form=form,
+        list_id=list_id,
+        task_id=task_id,
+        task_to_edit=task_to_edit,
+    )
+
+
+@app.route("/edit_user/<int:id>", methods=["GET", "POST"])
+@login_required
+def edit_user(id):
+    form = RegisterForm()
+    user_to_update = Users.query.get_or_404(id)
+    if request.method == "POST":
+        user_to_update.first_name = request.form["first_name"]
+        user_to_update.last_name = request.form["last_name"]
+        user_to_update.email = request.form["email"]
+        try:
+            db.session.commit()
+            flash("User Updated Successfully!")
+            return render_template(
+                "edit_user.html", form=form, user_to_update=user_to_update, id=id
+            )
+        except:
+            flash("Error! Looks like there was a problem.... Try Again!")
+            return render_template(
+                "edit_user.html", form=form, user_to_update=user_to_update
+            )
+    else:
+        return render_template(
+            "edit_user.html", form=form, user_to_update=user_to_update, id=id
+        )
+
+
 @app.route("/account", methods=["GET", "POST"])
 @login_required
 def account():
@@ -83,10 +151,10 @@ def delete(id):
         db.session.commit()
         flash("User Deleted Successfully!!")
 
-        return render_template("/delete.html")
+        return render_template("delete.html")
     except:
         flash("Error! Looks like there was a problem.... Try Again!")
-        return render_template("/delete.html")
+        return render_template("delete.html")
 
 
 @app.route("/")
@@ -214,32 +282,6 @@ def register():
         our_users=our_users,
         active_page=active_page,
     )
-
-
-@app.route("/update/<int:id>", methods=["GET", "POST"])
-@login_required
-def update(id):
-    form = RegisterForm()
-    user_to_update = Users.query.get_or_404(id)
-    if request.method == "POST":
-        user_to_update.first_name = request.form["first_name"]
-        user_to_update.last_name = request.form["last_name"]
-        user_to_update.email = request.form["email"]
-        try:
-            db.session.commit()
-            flash("User Updated Successfully!")
-            return render_template(
-                "update.html", form=form, user_to_update=user_to_update, id=id
-            )
-        except:
-            flash("Error! Looks like there was a problem.... Try Again!")
-            return render_template(
-                "update.html", form=form, user_to_update=user_to_update
-            )
-    else:
-        return render_template(
-            "update.html", form=form, user_to_update=user_to_update, id=id
-        )
 
 
 @app.route("/lists/<int:list_id>")

@@ -13,31 +13,27 @@
 
 {% endfor %}
 
-{% if list.list_owner_id == current_user.id %}
 <br><br><br>
+
+
 <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
-    <form method="POST">
+    <form action="/lists/{{ list_id }}/{{ task_id }}/edit" method="POST">
         {{ form.hidden_tag() }}
 
         {{ form.task_name.label(class="form-label") }}
-        {{ form.task_name(class="form-control") }}
+        {{ form.task_name(class="form-control", value=task_to_edit.task_name) }}
         <br>
         {{ form.priority.label(class="form-label") }}
         {{ form.priority(class="form-select") }}
         <br>
         {{ form.due_date.label(class="form-label") }}
-        {{ form.due_date (class= "datepicker") }}
+        {{ form.due_date(class= "datepicker") }}
+        <br><br>
+        {{ form.finished.label(class="form-label") }}
+        {{ form.finished(style="list-style:none", class="form-check") }}
         <br><br>
         {{ form.submit(class="btn btn-dark") }}
     </form>
 </div>
-{% else %}
-<br><br><br><br>
-<div class="alert alert-dark alert-dismissible fade show" role="alert">
-    Either this list does not exist, or you don't have permission to add tasks to this list.
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-
-{% endif %}
 
 {% endblock %}
