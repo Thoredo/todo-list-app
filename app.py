@@ -64,6 +64,7 @@ def add_task(list_id):
         form.priority.data = ""
 
         flash("Task Added!")
+        return redirect(url_for("view_list", list_id=list_id))
     return render_template("add_task.html", form=form, list=list)
 
 
@@ -83,13 +84,7 @@ def edit_task(list_id, task_id):
         try:
             db.session.commit()
             flash("Task Updated Successfully!")
-            return render_template(
-                "edit_task.html",
-                form=form,
-                list_id=list_id,
-                task_id=task_id,
-                task_to_edit=task_to_edit,
-            )
+            return redirect(url_for("view_list", list_id=list_id))
         except:
             flash("Error! Looks like there was a problem.... Try Again!")
             return render_template(
