@@ -44,7 +44,7 @@
     {% for our_user in our_users %}
     <tr>
         <td>
-            {{ our_user.id }}. <a href="{{ url_for('update',id=our_user.id) }}">{{ our_user.full_name }}</a> - {{
+            {{ our_user.id }}. <a href="{{ url_for('edit_user',id=our_user.id) }}">{{ our_user.full_name }}</a> - {{
             our_user.email }} - {{ our_user.username }} - <a href="{{ url_for('delete',id=our_user.id) }}">Delete</a>
         </td>
     </tr>

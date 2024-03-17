@@ -68,6 +68,64 @@ def add_task(list_id):
     return render_template("add_task.html", form=form, list=list, group=group)
 
 
+@app.route("/account", methods=["GET", "POST"])
+@login_required
+def account():
+    active_page = "account"
+
+    return render_template("account.html", active_page=active_page)
+
+
+@app.route("/delete/<int:id>", methods=["GET", "POST"])
+def delete(id):
+    user_to_delete = Users.query.get_or_404(id)
+
+    try:
+        db.session.delete(user_to_delete)
+        db.session.commit()
+        flash("User Deleted Successfully!!")
+
+        return render_template("delete.html")
+    except:
+        flash("Error! Looks like there was a problem.... Try Again!")
+        return render_template("delete.html")
+
+
+@app.route("/lists/<int:list_id>/<int:task_id>/delete")
+@login_required
+def delete_task(list_id, task_id):
+    task_to_delete = Tasks.query.get_or_404(task_id)
+    list = Lists.query.get(list_id)
+    group = GroupMembers.query.filter_by(group_id=list.group_id)
+    tasks = Tasks.query.filter_by(list_id=list.list_id)
+    date = datetime.now()
+    today = date.date()
+
+    try:
+        db.session.delete(task_to_delete)
+        db.session.commit()
+        flash("Task Deleted Successfully!!")
+
+        return render_template(
+            "view_list.html",
+            list=list,
+            group=group,
+            list_id=list_id,
+            tasks=tasks,
+            today=today,
+        )
+    except:
+        flash("Error! Looks like there was a problem.... Try Again!")
+        return render_template(
+            "view_list.html",
+            list=list,
+            group=group,
+            list_id=list_id,
+            tasks=tasks,
+            today=today,
+        )
+
+
 @app.route("/lists/<int:list_id>/<int:task_id>/edit", methods=["GET", "POST"])
 @login_required
 def edit_task(list_id, task_id):
@@ -131,29 +189,6 @@ def edit_user(id):
         return render_template(
             "edit_user.html", form=form, user_to_update=user_to_update, id=id
         )
-
-
-@app.route("/account", methods=["GET", "POST"])
-@login_required
-def account():
-    active_page = "account"
-
-    return render_template("account.html", active_page=active_page)
-
-
-@app.route("/delete/<int:id>", methods=["GET", "POST"])
-def delete(id):
-    user_to_delete = Users.query.get_or_404(id)
-
-    try:
-        db.session.delete(user_to_delete)
-        db.session.commit()
-        flash("User Deleted Successfully!!")
-
-        return render_template("delete.html")
-    except:
-        flash("Error! Looks like there was a problem.... Try Again!")
-        return render_template("delete.html")
 
 
 @app.route("/")
