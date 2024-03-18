@@ -93,6 +93,21 @@ def delete_account(id):
         return render_template("delete.html")
 
 
+@app.route("/lists/delete_list/<int:list_id>", methods=["GET", "POST"])
+def delete_list(list_id):
+    list_to_delete = Lists.query.get_or_404(list_id)
+
+    try:
+        db.session.delete(list_to_delete)
+        db.session.commit()
+        flash("List Deleted Successfully!!")
+
+        return redirect(url_for("personal_lists"))
+    except:
+        flash("Error! Looks like there was a problem.... Try Again!")
+        return redirect(url_for("personal_lists"))
+
+
 @app.route("/lists/<int:list_id>/<int:task_id>/delete")
 @login_required
 def delete_task(list_id, task_id):
