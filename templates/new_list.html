@@ -22,7 +22,10 @@
         {{ form.list_name(class="form-control") }}
         <br>
         {{ form.create(class="btn btn-dark") }}
+
+        <a href="{{ url_for('lists') }}" class="btn btn-dark">Back</a>
     </form>
+
 </div>
 
 {% endblock %}

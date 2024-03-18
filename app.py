@@ -65,7 +65,7 @@ def add_task(list_id):
 
         flash("Task Added!")
         return redirect(url_for("view_list", list_id=list_id))
-    return render_template("add_task.html", form=form, list=list, group=group)
+    return render_template("add_task.html", form=form, list=list, group=group, list_id=list_id)
 
 
 @app.route("/account", methods=["GET", "POST"])

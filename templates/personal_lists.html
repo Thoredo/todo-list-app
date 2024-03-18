@@ -16,6 +16,9 @@
 <table class="table table-striped table-hover">
     <th scope="col">List Name</th>
     <th scope="col">Active Tasks</th>
+    <th scope="col"></th>
+    <th scope="col"></th>
+    <th scope="col"></th>
     {% for list, active_tasks_count in lists_with_active_tasks %}
     <tr>
         <td><a href="{{ url_for('view_list', list_id=list.list_id) }}">{{ list.list_name }}</a></td>
@@ -23,5 +26,7 @@
     </tr>
     {% endfor %}
 </table>
+
+<a href="{{ url_for('lists') }}" class="btn btn-dark">Back</a>
 
 {% endblock %}

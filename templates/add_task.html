@@ -30,6 +30,7 @@
         {{ form.due_date (class= "datepicker") }}
         <br><br>
         {{ form.submit(class="btn btn-dark") }}
+        <a href="{{ url_for('view_list', list_id=list_id) }}" class="btn btn-dark">Back</a>
     </form>
 </div>
 {% else %}
