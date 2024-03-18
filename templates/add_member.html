@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Lists{% endblock %}
+
+{% block content %}
+
+{% for message in get_flashed_messages() %}
+
+<div class="alert alert-dark alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+{% endfor %}
+<br>
+<div class="shadow p-3 mb-5 bg-body-tertiary rounded">
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        {{ form.username.label(class="form-label") }}
+        {{ form.username(class="form-control") }}
+        <br>
+        {{ form.add(class="btn btn-dark") }}
+
+        <a href="{{ url_for('add_group_member', list_id=list_id) }}" class="btn btn-dark">Back</a>
+    </form>
+
+</div>
+
+{% endblock %}

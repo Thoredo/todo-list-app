@@ -13,7 +13,7 @@
 
 {% endfor %}
 <br>
-<a href="#" class="btn btn-dark">Add Member</a>
+<a href="{{ url_for('add_group_member', list_id=list_id) }}" class="btn btn-dark">Add Member</a>
 <a href="#" class="btn btn-dark">Back</a>
 <br>
 

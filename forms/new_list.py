@@ -5,4 +5,4 @@ from wtforms.validators import DataRequired
 
 class NewListForm(FlaskForm):
     list_name = StringField("List Name:", validators=[DataRequired()])
-    submit = SubmitField("submit")
+    submit = SubmitField("Submit")

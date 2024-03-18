@@ -12,6 +12,7 @@ from forms.login import LoginForm
 from forms.new_list import NewListForm
 from forms.add_task import AddTaskForm
 from forms.edit_tasks import EditTaskForm
+from forms.add_group_member import AddGroupMemberForm
 from dotenv import load_dotenv
 import os
 from datetime import datetime
@@ -43,6 +44,31 @@ def load_user(user_id):
     return Users.query.get(int(user_id))
 
 
+@app.route("/account", methods=["GET", "POST"])
+@login_required
+def account():
+    active_page = "account"
+
+    return render_template("account.html", active_page=active_page)
+
+
+@app.route("/lists/<int:list_id>/group/add_member", methods=["GET", "POST"])
+@login_required
+def add_group_member(list_id):
+    form = AddGroupMemberForm()
+    list = Lists.query.get(list_id)
+    user = Users.query.filter_by(username=form.username.data).first()
+    if form.validate_on_submit():
+        new_group_member = GroupMembers(group_id=list.group_id, user_id=user.id)
+        db.session.add(new_group_member)
+        db.session.commit()
+
+        form.username.data = ""
+
+        flash("Member Added!")
+    return render_template("add_member.html", form=form, list_id=list_id)
+
+
 @app.route("/lists/<int:list_id>/add_task", methods=["GET", "POST"])
 @login_required
 def add_task(list_id):
@@ -68,14 +94,6 @@ def add_task(list_id):
     return render_template(
         "add_task.html", form=form, list=list, group=group, list_id=list_id
     )
-
-
-@app.route("/account", methods=["GET", "POST"])
-@login_required
-def account():
-    active_page = "account"
-
-    return render_template("account.html", active_page=active_page)
 
 
 @app.route("/delete/<int:id>", methods=["GET", "POST"])
@@ -394,7 +412,9 @@ def view_list_group(list_id):
     for member in group:
         user_info = Users.query.get(member.user_id)
         group_members.append(user_info)
-    return render_template("view_list_group.html", group_members=group_members)
+    return render_template(
+        "view_list_group.html", group_members=group_members, list_id=list_id
+    )
 
 
 if __name__ == "__main__":
