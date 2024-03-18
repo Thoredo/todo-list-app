@@ -365,14 +365,14 @@ def register():
             db.session.add(user)
             db.session.commit()
             flash("Successfully registered")
+
+            form.first_name.data = ""
+            form.last_name.data = ""
+            form.username.data = ""
+            form.email.data = ""
+            form.password_hash.data = ""
         else:
             flash("Email adress already in use")
-
-        form.first_name.data = ""
-        form.last_name.data = ""
-        form.username.data = ""
-        form.email.data = ""
-        form.password_hash.data = ""
 
     our_users = Users.query.order_by(Users.date_added)
     return render_template(
