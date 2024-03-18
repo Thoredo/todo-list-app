@@ -13,6 +13,8 @@
 
 {% endfor %}
 
+{% if list_to_edit.list_owner_id == current_user.id %}
+
 <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
     <form method="POST">
         {{ form.hidden_tag() }}
@@ -26,6 +28,14 @@
     </form>
 
 </div>
+{% else %}
+<div class="alert alert-dark alert-dismissible fade show" role="alert">
+    Sorry! You Can't Edit This List...
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<a href="{{ url_for('lists') }}" class="btn btn-dark">Back</a>
+
+{% endif %}
 
 
 {% endblock %}
