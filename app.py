@@ -385,5 +385,17 @@ def view_list(list_id):
     )
 
 
+@app.route("/lists/<int:list_id>/group")
+@login_required
+def view_list_group(list_id):
+    list = Lists.query.get(list_id)
+    group = GroupMembers.query.filter_by(group_id=list.group_id)
+    group_members = []
+    for member in group:
+        user_info = Users.query.get(member.user_id)
+        group_members.append(user_info)
+    return render_template("view_list_group.html", group_members=group_members)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
