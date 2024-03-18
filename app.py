@@ -41,7 +41,7 @@ login_manager.login_view = "login"
 
 @login_manager.user_loader
 def load_user(user_id):
-    return Users.query.get(int(user_id))
+    return db.session.get(Users, int(user_id))
 
 
 @app.route("/account", methods=["GET", "POST"])
@@ -56,7 +56,7 @@ def account():
 @login_required
 def add_group_member(list_id):
     form = AddGroupMemberForm()
-    list = Lists.query.get(list_id)
+    list = db.session.get(Lists, list_id)
     user = Users.query.filter_by(username=form.username.data).first()
     if form.validate_on_submit():
         new_group_member = GroupMembers(group_id=list.group_id, user_id=user.id)
@@ -73,7 +73,7 @@ def add_group_member(list_id):
 @login_required
 def add_task(list_id):
     form = AddTaskForm()
-    list = Lists.query.get(list_id)
+    list = db.session.get(Lists, list_id)
     group = GroupMembers.query.filter_by(group_id=list.group_id)
     if form.validate_on_submit():
         new_task = Tasks(
@@ -134,7 +134,7 @@ def delete_list(list_id):
 @login_required
 def delete_task(list_id, task_id):
     task_to_delete = Tasks.query.get_or_404(task_id)
-    list = Lists.query.get(list_id)
+    list = db.session.get(Lists, list_id)
     group = GroupMembers.query.filter_by(group_id=list.group_id)
     tasks = Tasks.query.filter_by(list_id=list.list_id)
     date = datetime.now()
@@ -189,7 +189,7 @@ def edit_list_name(list_id):
 def edit_task(list_id, task_id):
     form = EditTaskForm()
     task_to_edit = Tasks.query.get_or_404(task_id)
-    list = Lists.query.get(list_id)
+    list = db.session.get(Lists, list_id)
     group = GroupMembers.query.filter_by(group_id=list.group_id)
     if request.method == "POST":
         task_to_edit.task_name = request.form["task_name"]
@@ -409,7 +409,7 @@ def shared_lists():
 @app.route("/lists/<int:list_id>")
 @login_required
 def view_list(list_id):
-    list = Lists.query.get(list_id)
+    list = db.session.get(Lists, list_id)
     group = GroupMembers.query.filter_by(group_id=list.group_id)
     tasks = Tasks.query.filter_by(list_id=list.list_id)
     date = datetime.now()
@@ -427,11 +427,11 @@ def view_list(list_id):
 @app.route("/lists/<int:list_id>/group")
 @login_required
 def view_list_group(list_id):
-    list = Lists.query.get(list_id)
+    list = db.session.get(Lists, list_id)
     group = GroupMembers.query.filter_by(group_id=list.group_id)
     group_members = []
     for member in group:
-        user_info = Users.query.get(member.user_id)
+        user_info = db.session.get(Users, member.user_id)
         group_members.append(user_info)
     return render_template(
         "view_list_group.html", group_members=group_members, list_id=list_id
