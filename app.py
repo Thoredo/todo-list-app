@@ -65,7 +65,9 @@ def add_task(list_id):
 
         flash("Task Added!")
         return redirect(url_for("view_list", list_id=list_id))
-    return render_template("add_task.html", form=form, list=list, group=group, list_id=list_id)
+    return render_template(
+        "add_task.html", form=form, list=list, group=group, list_id=list_id
+    )
 
 
 @app.route("/account", methods=["GET", "POST"])
@@ -123,6 +125,26 @@ def delete_task(list_id, task_id):
             list_id=list_id,
             tasks=tasks,
             today=today,
+        )
+
+
+@app.route("/lists/<int:list_id>/edit_name", methods=["GET", "POST"])
+@login_required
+def edit_list_name(list_id):
+    form = NewListForm()
+    list_to_edit = Lists.query.get_or_404(list_id)
+    if request.method == "POST":
+        list_to_edit.list_name = request.form["list_name"]
+        try:
+            db.session.commit()
+            flash("List Name Updated Successfully!")
+            return redirect(url_for("personal_lists"))
+        except:
+            flash("Error! Looks like there was a problem.... Try Again!")
+            return redirect(url_for("personal_lists"))
+    else:
+        return render_template(
+            "edit_list_name.html", form=form, list_to_edit=list_to_edit
         )
 
 

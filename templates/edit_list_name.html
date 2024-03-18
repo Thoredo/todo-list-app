@@ -12,14 +12,13 @@
 </div>
 
 {% endfor %}
-<br><br><br>
 
 <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
     <form method="POST">
         {{ form.hidden_tag() }}
 
         {{ form.list_name.label(class="form-label") }}
-        {{ form.list_name(class="form-control") }}
+        {{ form.list_name(class="form-control", value=list_to_edit.list_name) }}
         <br>
         {{ form.submit(class="btn btn-dark") }}
 
@@ -27,5 +26,6 @@
     </form>
 
 </div>
+
 
 {% endblock %}
