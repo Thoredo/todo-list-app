@@ -258,7 +258,8 @@ def index():
 
 @app.route("/lists")
 def lists():
-    return render_template("/lists.html")
+    active_page = "lists"
+    return render_template("/lists.html", active_page=active_page)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -382,6 +383,26 @@ def register():
         form=form,
         our_users=our_users,
         active_page=active_page,
+    )
+
+
+@app.route("/lists/shared_lists")
+@login_required
+def shared_lists():
+    lists_with_active_tasks = []
+    groups = GroupMembers.query.filter_by(user_id=current_user.id)
+    group_ids = [group.group_id for group in groups]
+    lists = Lists.query.filter(
+        Lists.group_id.in_(group_ids), Lists.list_owner_id != current_user.id
+    )
+    for list in lists:
+        active_tasks_count = Tasks.query.filter_by(
+            list_id=list.list_id, finished=False
+        ).count()
+        lists_with_active_tasks.append((list, active_tasks_count))
+    return render_template(
+        "personal_lists.html",
+        lists_with_active_tasks=lists_with_active_tasks,
     )
 
 
