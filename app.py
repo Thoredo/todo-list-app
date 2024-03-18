@@ -97,14 +97,18 @@ def delete_account(id):
 def delete_list(list_id):
     list_to_delete = Lists.query.get_or_404(list_id)
 
-    try:
-        db.session.delete(list_to_delete)
-        db.session.commit()
-        flash("List Deleted Successfully!!")
+    if current_user.id == list_to_delete.list_owner_id:
+        try:
+            db.session.delete(list_to_delete)
+            db.session.commit()
+            flash("List Deleted Successfully!!")
 
-        return redirect(url_for("personal_lists"))
-    except:
-        flash("Error! Looks like there was a problem.... Try Again!")
+            return redirect(url_for("personal_lists"))
+        except:
+            flash("Error! Looks like there was a problem.... Try Again!")
+            return redirect(url_for("personal_lists"))
+    else:
+        flash("Please Don't Try To Delete Other Peoples Lists. That Is Not Nice!")
         return redirect(url_for("personal_lists"))
 
 
@@ -122,7 +126,6 @@ def delete_task(list_id, task_id):
         db.session.delete(task_to_delete)
         db.session.commit()
         flash("Task Deleted Successfully!!")
-
         return render_template(
             "view_list.html",
             list=list,
