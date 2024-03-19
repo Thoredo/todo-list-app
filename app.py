@@ -417,7 +417,7 @@ def shared_lists():
         ).count()
         lists_with_active_tasks.append((list, active_tasks_count))
     return render_template(
-        "personal_lists.html",
+        "shared_lists.html",
         lists_with_active_tasks=lists_with_active_tasks,
     )
 
@@ -454,7 +454,7 @@ def view_list_group(list_id):
         user_info = db.session.get(Users, member.user_id)
         group_members.append(user_info)
     return render_template(
-        "view_list_group.html", group_members=group_members, list_id=list_id
+        "view_list_group.html", group_members=group_members, list_id=list_id, list=list
     )
 
 

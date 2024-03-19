@@ -50,6 +50,10 @@
     {% endfor %}
 </table>
 
+<a href="{{ url_for('add_task', list_id=list_id) }}" class="btn btn-dark">Add Task</a>
+<a href="{{ url_for('view_list_group', list_id=list_id) }}" class="btn btn-dark">View List Group</a>
+<a href="{{ url_for('lists') }}" class="btn btn-dark">Back</a>
+
 {% else %}
 
 <div class="alert alert-dark alert-dismissible fade show" role="alert">
