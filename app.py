@@ -142,7 +142,7 @@ def delete_list(list_id):
         return redirect(url_for("personal_lists"))
 
 
-@app.route("/lists/<int:list_id>/<int:task_id>/delete")
+@app.route("/lists/<int:list_id>/<int:task_id>/delete", methods=["GET", "POST"])
 @login_required
 def delete_task(list_id, task_id):
     task_to_delete = Tasks.query.get_or_404(task_id)
@@ -422,7 +422,7 @@ def shared_lists():
     )
 
 
-@app.route("/lists/<int:list_id>")
+@app.route("/lists/<int:list_id>", methods=["GET", "POST"])
 @login_required
 def view_list(list_id):
     list = db.session.get(Lists, list_id)
