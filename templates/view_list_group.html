@@ -31,7 +31,9 @@
         <td>{{ member.email }}</td>
         {% if member.id != list.list_owner_id %}
         {% if current_user.id == list.list_owner_id %}
-        <td><a href="#" class="btn btn-danger">Remove</a></td>
+        <td><a href="{{ url_for('remove_member', list_id=list_id, user_id=member.id) }}"
+                class="btn btn-danger">Remove</a>
+        </td>
         {% endif %}
         {% if current_user.id == member.id %}
         <td><a href="#" class="btn btn-danger">Leave Group</a></td>

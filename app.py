@@ -402,6 +402,44 @@ def register():
     )
 
 
+@app.route("/lists/<int:list_id>/group/remove_member/<int:user_id>")
+@login_required
+def remove_member(list_id, user_id):
+    list = db.session.get(Lists, list_id)
+    group = GroupMembers.query.filter_by(group_id=list.group_id)
+    group_members = []
+    for member in group:
+        user_info = db.session.get(Users, member.user_id)
+        group_members.append(user_info)
+
+    user_to_remove = GroupMembers.query.filter_by(
+        user_id=user_id, group_id=list.group_id
+    ).first()
+
+    try:
+        db.session.delete(user_to_remove)
+        db.session.commit()
+        flash("User Removed Successfully!!")
+        group_members = []
+        for member in group:
+            user_info = db.session.get(Users, member.user_id)
+            group_members.append(user_info)
+        return render_template(
+            "view_list_group.html",
+            group_members=group_members,
+            list_id=list_id,
+            list=list,
+        )
+    except:
+        flash("Error! Looks like there was a problem.... Try Again!")
+        return render_template(
+            "view_list_group.html",
+            group_members=group_members,
+            list_id=list_id,
+            list=list,
+        )
+
+
 @app.route("/lists/shared_lists")
 @login_required
 def shared_lists():
