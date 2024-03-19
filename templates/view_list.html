@@ -13,8 +13,8 @@
 
 {% endfor %}
 <br><br><br>
-{% for member in group %}
-{% if member.user_id == current_user.id %}
+
+{% if current_user.id in group_members_ids %}
 <a href="{{ url_for('add_task', list_id=list_id) }}" class="btn btn-dark">Add Task</a>
 <a href="{{ url_for('view_list_group', list_id=list_id) }}" class="btn btn-dark">View List Group</a>
 <a href="{{ url_for('lists') }}" class="btn btn-dark">Back</a>
@@ -56,5 +56,4 @@
 
 {% endif %}
 
-{% endfor %}
 {% endblock %}

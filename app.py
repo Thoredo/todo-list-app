@@ -75,6 +75,10 @@ def add_task(list_id):
     form = AddTaskForm()
     list = db.session.get(Lists, list_id)
     group = GroupMembers.query.filter_by(group_id=list.group_id)
+    group_members_ids = []
+    for member in group:
+        user_info = db.session.get(Users, member.user_id)
+        group_members_ids.append(user_info.id)
     if form.validate_on_submit():
         new_task = Tasks(
             list_id=list_id,
@@ -92,7 +96,11 @@ def add_task(list_id):
         flash("Task Added!")
         return redirect(url_for("view_list", list_id=list_id))
     return render_template(
-        "add_task.html", form=form, list=list, group=group, list_id=list_id
+        "add_task.html",
+        form=form,
+        list=list,
+        group_members_ids=group_members_ids,
+        list_id=list_id,
     )
 
 
@@ -191,6 +199,10 @@ def edit_task(list_id, task_id):
     task_to_edit = Tasks.query.get_or_404(task_id)
     list = db.session.get(Lists, list_id)
     group = GroupMembers.query.filter_by(group_id=list.group_id)
+    group_members_ids = []
+    for member in group:
+        user_info = db.session.get(Users, member.user_id)
+        group_members_ids.append(user_info.id)
     if request.method == "POST":
         task_to_edit.task_name = request.form["task_name"]
         task_to_edit.priority = request.form["priority"]
@@ -211,7 +223,7 @@ def edit_task(list_id, task_id):
                 list_id=list_id,
                 task_id=task_id,
                 task_to_edit=task_to_edit,
-                group=group,
+                group_members_ids=group_members_ids,
             )
     return render_template(
         "edit_task.html",
@@ -219,7 +231,7 @@ def edit_task(list_id, task_id):
         list_id=list_id,
         task_id=task_id,
         task_to_edit=task_to_edit,
-        group=group,
+        group_members_ids=group_members_ids,
     )
 
 
@@ -411,13 +423,17 @@ def shared_lists():
 def view_list(list_id):
     list = db.session.get(Lists, list_id)
     group = GroupMembers.query.filter_by(group_id=list.group_id)
+    group_members_ids = []
+    for member in group:
+        user_info = db.session.get(Users, member.user_id)
+        group_members_ids.append(user_info.id)
     tasks = Tasks.query.filter_by(list_id=list.list_id)
     date = datetime.now()
     today = date.date()
     return render_template(
         "view_list.html",
         list=list,
-        group=group,
+        group_members_ids=group_members_ids,
         list_id=list_id,
         tasks=tasks,
         today=today,

@@ -15,8 +15,7 @@
 
 <br><br><br>
 
-{% for member in group %}
-{% if member.user_id == current_user.id %}
+{% if current_user.id in group_members_ids %}
 <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
     <form action="/lists/{{ list_id }}/{{ task_id }}/edit" method="POST">
         {{ form.hidden_tag() }}
@@ -45,6 +44,6 @@
 </div>
 
 {% endif %}
-{% endfor %}
+
 
 {% endblock %}
