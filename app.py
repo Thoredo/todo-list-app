@@ -108,14 +108,18 @@ def add_task(list_id):
 def delete_account(id):
     user_to_delete = Users.query.get_or_404(id)
 
-    try:
-        db.session.delete(user_to_delete)
-        db.session.commit()
-        flash("User Deleted Successfully!!")
+    if current_user.id == user_to_delete.id:
+        try:
+            db.session.delete(user_to_delete)
+            db.session.commit()
+            flash("User Deleted Successfully!!")
 
-        return render_template("delete.html")
-    except:
-        flash("Error! Looks like there was a problem.... Try Again!")
+            return render_template("delete.html")
+        except:
+            flash("Error! Looks like there was a problem.... Try Again!")
+            return render_template("delete.html")
+    else:
+        flash("Please Don't Try To Delete Other Peoples Account. That Is Not Nice!")
         return render_template("delete.html")
 
 
