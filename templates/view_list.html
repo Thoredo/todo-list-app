@@ -17,7 +17,11 @@
 {% if current_user.id in group_members_ids %}
 <a href="{{ url_for('add_task', list_id=list_id) }}" class="btn btn-dark">Add Task</a>
 <a href="{{ url_for('view_list_group', list_id=list_id) }}" class="btn btn-dark">View List Group</a>
-<a href="{{ url_for('lists') }}" class="btn btn-dark">Back</a>
+{% if current_user.id == list.list_owner_id %}
+<a href="{{ url_for('personal_lists') }}" class="btn btn-dark">Back</a>
+{% else %}
+<a href="{{ url_for('shared_lists') }}" class="btn btn-dark">Back</a>
+{% endif %}
 <br>
 <table class="table table-striped table-hover">
     <th scope="col">Task Name</th>
