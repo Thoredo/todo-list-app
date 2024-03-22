@@ -130,14 +130,32 @@ def delete_list(list_id):
 
     if current_user.id == list_to_delete.list_owner_id:
         try:
+            # Delete tasks
             tasks_to_delete = Tasks.query.filter_by(list_id=list_id).all()
 
             for task in tasks_to_delete:
                 db.session.delete(task)
             db.session.commit()
 
+            # Remove people that were in the list group
+            group_members = GroupMembers.query.filter_by(
+                group_id=list_to_delete.group_id
+            ).all()
+            for member in group_members:
+                db.session.delete(member)
+            db.session.commit()
+
+            # Remove the list
             db.session.delete(list_to_delete)
             db.session.commit()
+
+            # Remove the group connected to the list
+            group_to_delete = Groups.query.filter_by(
+                group_id=list_to_delete.group_id
+            ).all()
+            db.session.delete(group_to_delete)
+            db.session.commit()
+
             flash("List Deleted Successfully!!")
 
             return redirect(url_for("personal_lists"))
