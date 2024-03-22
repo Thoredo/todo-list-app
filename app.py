@@ -125,10 +125,17 @@ def delete_account(id):
 
 @app.route("/lists/delete_list/<int:list_id>", methods=["GET", "POST"])
 def delete_list(list_id):
+
     list_to_delete = Lists.query.get_or_404(list_id)
 
     if current_user.id == list_to_delete.list_owner_id:
         try:
+            tasks_to_delete = Tasks.query.filter_by(list_id=list_id).all()
+
+            for task in tasks_to_delete:
+                db.session.delete(task)
+            db.session.commit()
+
             db.session.delete(list_to_delete)
             db.session.commit()
             flash("List Deleted Successfully!!")
