@@ -59,13 +59,16 @@ def add_group_member(list_id):
     list = db.session.get(Lists, list_id)
     user = Users.query.filter_by(username=form.username.data).first()
     if form.validate_on_submit():
-        new_group_member = GroupMembers(group_id=list.group_id, user_id=user.id)
-        db.session.add(new_group_member)
-        db.session.commit()
+        if user:
+            new_group_member = GroupMembers(group_id=list.group_id, user_id=user.id)
+            db.session.add(new_group_member)
+            db.session.commit()
 
-        form.username.data = ""
+            form.username.data = ""
 
-        flash("Member Added!")
+            flash("Member Added!")
+        else:
+            flash("This username doesn't exist!")
     return render_template("add_member.html", form=form, list_id=list_id)
 
 
