@@ -284,9 +284,56 @@ def index():
 
 
 @app.route("/lists")
+@login_required
 def lists():
     active_page = "lists"
     return render_template("/lists.html", active_page=active_page)
+
+
+@app.route("/lists/<int:list_id>/group/leave")
+@login_required
+def leave_group(list_id):
+    list = db.session.get(Lists, list_id)
+    member_leaving = GroupMembers.query.filter_by(
+        user_id=current_user.id, group_id=list.group_id
+    ).first()
+    try:
+        db.session.delete(member_leaving)
+        db.session.commit()
+        flash("Succesfully Left Group!!")
+        lists_with_active_tasks = []
+        groups = GroupMembers.query.filter_by(user_id=current_user.id)
+        group_ids = [group.group_id for group in groups]
+        lists = Lists.query.filter(
+            Lists.group_id.in_(group_ids), Lists.list_owner_id != current_user.id
+        )
+        for list in lists:
+            active_tasks_count = Tasks.query.filter_by(
+                list_id=list.list_id, finished=False
+            ).count()
+            lists_with_active_tasks.append((list, active_tasks_count))
+        return render_template(
+            "shared_lists.html",
+            lists_with_active_tasks=lists_with_active_tasks,
+        )
+    except:
+        flash("There was an error leaving the group, try again!!")
+        group = GroupMembers.query.filter_by(group_id=list.group_id)
+        group_members_ids = []
+        for member in group:
+            user_info = db.session.get(Users, member.user_id)
+            group_members_ids.append(user_info.id)
+        tasks = Tasks.query.filter_by(list_id=list.list_id)
+        date = datetime.now()
+        today = date.date()
+        return render_template(
+            "view_list.html",
+            list=list,
+            group_members_ids=group_members_ids,
+            list_id=list_id,
+            tasks=tasks,
+            today=today,
+        )
 
 
 @app.route("/login", methods=["GET", "POST"])
