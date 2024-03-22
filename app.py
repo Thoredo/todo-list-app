@@ -18,6 +18,7 @@ import os
 from datetime import datetime
 from database.tables import Users, Lists, Groups, GroupMembers, Tasks, db
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy.exc import IntegrityError
 
 load_dotenv()
 
@@ -57,18 +58,23 @@ def account():
 def add_group_member(list_id):
     form = AddGroupMemberForm()
     list = db.session.get(Lists, list_id)
-    user = Users.query.filter_by(username=form.username.data).first()
+
     if form.validate_on_submit():
+        user = Users.query.filter_by(username=form.username.data).first()
         if user:
-            new_group_member = GroupMembers(group_id=list.group_id, user_id=user.id)
-            db.session.add(new_group_member)
-            db.session.commit()
+            try:
+                new_group_member = GroupMembers(group_id=list.group_id, user_id=user.id)
+                db.session.add(new_group_member)
+                db.session.commit()
 
-            form.username.data = ""
+                form.username.data = ""
 
-            flash("Member Added!")
+                flash("Member added successfully!", "success")
+            except IntegrityError:
+                db.session.rollback()
+                flash("This user is already a member of the group!", "danger")
         else:
-            flash("This username doesn't exist!")
+            flash("User not found!", "danger")
     return render_template("add_member.html", form=form, list_id=list_id)
 
 

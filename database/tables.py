@@ -50,6 +50,10 @@ class GroupMembers(db.Model):
     group_id = db.Column(db.Integer, db.ForeignKey("list_groups.group_id"))
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 
+    __table_args__ = (
+        db.UniqueConstraint("group_id", "user_id", name="_group_user_uc"),
+    )
+
 
 class Tasks(db.Model):
 
