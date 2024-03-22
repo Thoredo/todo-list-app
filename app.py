@@ -155,6 +155,10 @@ def delete_task(list_id, task_id):
     task_to_delete = Tasks.query.get_or_404(task_id)
     list = db.session.get(Lists, list_id)
     group = GroupMembers.query.filter_by(group_id=list.group_id)
+    group_members_ids = []
+    for member in group:
+        user_info = db.session.get(Users, member.user_id)
+        group_members_ids.append(user_info.id)
     tasks = Tasks.query.filter_by(list_id=list.list_id)
     date = datetime.now()
     today = date.date()
@@ -166,7 +170,7 @@ def delete_task(list_id, task_id):
         return render_template(
             "view_list.html",
             list=list,
-            group=group,
+            group_members_ids=group_members_ids,
             list_id=list_id,
             tasks=tasks,
             today=today,
