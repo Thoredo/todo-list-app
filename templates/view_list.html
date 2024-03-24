@@ -36,8 +36,10 @@
         <td>{{ task.due_date.strftime('%Y-%m-%d')}}</td>
         <td>{% if task.finished %}
             <p class="btn btn-success">Finished</p>
-            {% elif task.due_date.date() >= today %}
+            {% elif task.due_date.date() > today %}
             <p class="btn btn-info">In Progress</p>
+            {% elif task.due_date.date() == today %}
+            <p class="btn btn-warning">Due Today</p>
             {% else %}
             <p class="btn btn-danger">Overdue</p>
             {% endif %}
