@@ -311,6 +311,22 @@ def edit_user(id):
         )
 
 
+@app.route("/invites")
+@login_required
+def group_invites():
+    active_page = "invites"
+    invites = GroupInvites.query.filter_by(recipient_id=current_user.id).all()
+    all_lists = []
+    if invites:
+        for invite in invites:
+            list = db.session.get(Lists, invite.list_id)
+            list_name = list.list_name
+            user = db.session.get(Users, list.list_owner_id)
+            sender_name = user.full_name
+            all_lists.append({"list_name": list_name, "sender_name": sender_name})
+    return render_template("invites.html", active_page=active_page, all_lists=all_lists)
+
+
 @app.route("/")
 def index():
     active_page = "index"
