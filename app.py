@@ -16,7 +16,7 @@ from forms.add_group_member import AddGroupMemberForm
 from dotenv import load_dotenv
 import os
 from datetime import datetime
-from database.tables import Users, Lists, Groups, GroupMembers, Tasks, db
+from database.tables import db, Users, Lists, Groups, GroupMembers, Tasks, GroupInvites
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.exc import IntegrityError
 
@@ -60,19 +60,27 @@ def add_group_member(list_id):
     list = db.session.get(Lists, list_id)
 
     if form.validate_on_submit():
-        user = Users.query.filter_by(username=form.username.data).first()
-        if user:
-            try:
-                new_group_member = GroupMembers(group_id=list.group_id, user_id=user.id)
-                db.session.add(new_group_member)
+        recipient = Users.query.filter_by(username=form.username.data).first()
+        if recipient:
+            if GroupMembers.query.filter_by(
+                user_id=recipient.id, group_id=list.group_id
+            ).first():
+                flash("This user is already a member of the group!", "danger")
+            elif GroupInvites.query.filter_by(
+                recipient_id=recipient.id, list_id=list_id
+            ).first():
+                flash("This user is already has an invite to this group!", "danger")
+            else:
+                new_invite = GroupInvites(
+                    sender_id=current_user.id,
+                    recipient_id=recipient.id,
+                    list_id=list_id,
+                )
+                db.session.add(new_invite)
                 db.session.commit()
 
                 form.username.data = ""
-
-                flash("Member added successfully!", "success")
-            except IntegrityError:
-                db.session.rollback()
-                flash("This user is already a member of the group!", "danger")
+                flash("Invite sent successfully!", "success")
         else:
             flash("User not found!", "danger")
     return render_template("add_member.html", form=form, list_id=list_id)
@@ -583,3 +591,29 @@ def view_list_group(list_id):
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+# OLD add member function
+# @app.route("/lists/<int:list_id>/group/add_member", methods=["GET", "POST"])
+# @login_required
+# def add_group_member(list_id):
+#     form = AddGroupMemberForm()
+#     list = db.session.get(Lists, list_id)
+
+#     if form.validate_on_submit():
+#         user = Users.query.filter_by(username=form.username.data).first()
+#         if user:
+#             try:
+#                 new_group_member = GroupMembers(group_id=list.group_id, user_id=user.id)
+#                 db.session.add(new_group_member)
+#                 db.session.commit()
+
+#                 form.username.data = ""
+
+#                 flash("Member added successfully!", "success")
+#             except IntegrityError:
+#                 db.session.rollback()
+#                 flash("This user is already a member of the group!", "danger")
+#         else:
+#             flash("User not found!", "danger")
+#     return render_template("add_member.html", form=form, list_id=list_id)

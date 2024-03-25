@@ -5,4 +5,4 @@ from wtforms.validators import DataRequired
 
 class AddGroupMemberForm(FlaskForm):
     username = StringField("Username:", validators=[DataRequired()])
-    add = SubmitField("Add")
+    invite = SubmitField("Invite")

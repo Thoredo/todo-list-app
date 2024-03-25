@@ -14,7 +14,7 @@
 {% endfor %}
 <br>
 {% if current_user.id == list.list_owner_id %}
-<a href="{{ url_for('add_group_member', list_id=list_id) }}" class="btn btn-dark">Add Member</a>
+<a href="{{ url_for('add_group_member', list_id=list_id) }}" class="btn btn-dark">Invite Users</a>
 {% endif %}
 <a href="{{ url_for('view_list', list_id=list.list_id) }}" class="btn btn-dark">Back</a>
 <br>
