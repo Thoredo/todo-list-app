@@ -23,7 +23,7 @@
         <td>{{ list.list_name }}</td>
         <td>{{ list.sender_name }}</td>
         <td><a href="{{ url_for('accept_invite', list_id=list.list_id) }}" class="btn btn-success">Accept</a></td>
-        <td><a href="#" class="btn btn-danger">Deny</a></td>
+        <td><a href="{{ url_for('deny_invite', list_id=list.list_id) }}" class="btn btn-danger">Deny</a></td>
     </tr>
     {% endfor %}
 </table>

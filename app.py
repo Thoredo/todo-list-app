@@ -244,6 +244,22 @@ def delete_task(list_id, task_id):
         )
 
 
+@app.route("/invites/<int:list_id>/deny")
+@login_required
+def deny_invite(list_id):
+    # See if invite exists
+    invite = GroupInvites.query.filter_by(
+        list_id=list_id, recipient_id=current_user.id
+    ).first()
+
+    if invite:
+        # remove invite
+        db.session.delete(invite)
+        db.session.commit()
+        flash("Invite Denied!")
+
+    return redirect(url_for("group_invites"))
+
 @app.route("/lists/<int:list_id>/edit_name", methods=["GET", "POST"])
 @login_required
 def edit_list_name(list_id):
