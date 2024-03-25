@@ -53,6 +53,28 @@ def account():
     return render_template("account.html", active_page=active_page)
 
 
+@app.route("/invites/<int:list_id>/accept")
+@login_required
+def accept_invite(list_id):
+    # See if invite exists
+    invite = GroupInvites.query.filter_by(
+        list_id=list_id, recipient_id=current_user.id
+    ).first()
+
+    if invite:
+        # join group of the list
+        list = db.session.get(Lists, list_id)
+        new_group_member = GroupMembers(group_id=list.group_id, user_id=current_user.id)
+        db.session.add(new_group_member)
+        db.session.commit()
+        # remove invite
+        db.session.delete(invite)
+        db.session.commit()
+        flash("Invite Accepted!")
+
+    return redirect(url_for("group_invites"))
+
+
 @app.route("/lists/<int:list_id>/group/add_member", methods=["GET", "POST"])
 @login_required
 def add_group_member(list_id):
@@ -321,9 +343,12 @@ def group_invites():
         for invite in invites:
             list = db.session.get(Lists, invite.list_id)
             list_name = list.list_name
+            list_id = list.list_id
             user = db.session.get(Users, list.list_owner_id)
             sender_name = user.full_name
-            all_lists.append({"list_name": list_name, "sender_name": sender_name})
+            all_lists.append(
+                {"list_name": list_name, "sender_name": sender_name, "list_id": list_id}
+            )
     return render_template("invites.html", active_page=active_page, all_lists=all_lists)
 
 
