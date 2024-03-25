@@ -18,6 +18,12 @@ class Users(db.Model, UserMixin):
 
     lists = db.relationship("Lists", backref="creator")
     groups = db.relationship("GroupMembers", backref="group")
+    invites_sent = db.relationship(
+        "GroupInvites", foreign_keys="[GroupInvites.sender_id]", backref="sender"
+    )
+    invites_received = db.relationship(
+        "GroupInvites", foreign_keys="[GroupInvites.recipient_id]", backref="recipient"
+    )
 
     @property
     def password(self):
@@ -66,3 +72,14 @@ class Tasks(db.Model):
     finished = db.Column(db.Boolean, default=False, nullable=False)
     priority = db.Column(db.String(50), nullable=False)
     due_date = db.Column(db.DateTime)
+
+
+class GroupInvites(db.Model):
+    __tablename__ = "group_invites"
+
+    invite_id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    recipient_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    list_id = db.Column(
+        db.Integer, db.ForeignKey("list_groups.group_id"), nullable=False
+    )
