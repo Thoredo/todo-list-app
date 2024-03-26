@@ -1,0 +1,42 @@
+<div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
+    id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Filters</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <p class="fw-bold">Status</p>
+        <div class="form-check">
+            <input class="form-check-input status-checkbox" type="checkbox" value="all_tasks" id="status_all" checked>
+            <label class="form-check-label" for="status_all">
+                All
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input status-checkbox" type="checkbox" value="in_progress" id="status_in_progress">
+            <label class="form-check-label" for="status_in_progress">
+                In Progress
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input status-checkbox" type="checkbox" value="due_today" id="status_due_today">
+            <label class="form-check-label" for="status_due_today">
+                Due Today
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input status-checkbox" type="checkbox" value="overdue" id="status_overdue">
+            <label class="form-check-label" for="status_overdue">
+                Overdue
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input status-checkbox" type="checkbox" value="finished" id="status_finished">
+            <label class="form-check-label" for="status_finished">
+                Finished
+            </label>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/task_filter.js') }}"></script>

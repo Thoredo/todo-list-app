@@ -260,6 +260,7 @@ def deny_invite(list_id):
 
     return redirect(url_for("group_invites"))
 
+
 @app.route("/lists/<int:list_id>/edit_name", methods=["GET", "POST"])
 @login_required
 def edit_list_name(list_id):
@@ -622,6 +623,7 @@ def view_list(list_id):
     tasks = Tasks.query.filter_by(list_id=list.list_id)
     date = datetime.now()
     today = date.date()
+
     return render_template(
         "view_list.html",
         list=list,
@@ -648,29 +650,3 @@ def view_list_group(list_id):
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
-# OLD add member function
-# @app.route("/lists/<int:list_id>/group/add_member", methods=["GET", "POST"])
-# @login_required
-# def add_group_member(list_id):
-#     form = AddGroupMemberForm()
-#     list = db.session.get(Lists, list_id)
-
-#     if form.validate_on_submit():
-#         user = Users.query.filter_by(username=form.username.data).first()
-#         if user:
-#             try:
-#                 new_group_member = GroupMembers(group_id=list.group_id, user_id=user.id)
-#                 db.session.add(new_group_member)
-#                 db.session.commit()
-
-#                 form.username.data = ""
-
-#                 flash("Member added successfully!", "success")
-#             except IntegrityError:
-#                 db.session.rollback()
-#                 flash("This user is already a member of the group!", "danger")
-#         else:
-#             flash("User not found!", "danger")
-#     return render_template("add_member.html", form=form, list_id=list_id)
