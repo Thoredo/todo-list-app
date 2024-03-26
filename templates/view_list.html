@@ -34,7 +34,8 @@
     <th scope="col"></th>
     {% for task in tasks %}
     <tr class="task-row"
-        data-status="{% if task.finished %}finished{% elif task.due_date.date() > today %}in_progress{% elif task.due_date.date() == today %}due_today{% else %}overdue{% endif %}">
+        data-status="{% if task.finished %}finished{% elif task.due_date.date() > today %}in_progress{% elif task.due_date.date() == today %}due_today{% else %}overdue{% endif %}"
+        data-priority="{{ task.priority }}">
         <td>{{ task.task_name }}</td>
         <td>{{ task.priority }}</td>
         <td>{{ task.due_date.strftime('%Y-%m-%d')}}</td>
