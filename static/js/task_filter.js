@@ -37,6 +37,8 @@ document.addEventListener("DOMContentLoaded", function () {
             var status = task.dataset.status;
             if (selectedStatuses.includes(status) || selectedStatuses.includes('all_tasks')) {
                 task.style.display = 'table-row';
+            } else if (selectedStatuses.includes('in_progress') && (status === 'due_today' || status === 'overdue')) {
+                task.style.display = 'table-row';
             } else {
                 task.style.display = 'none';
             }
