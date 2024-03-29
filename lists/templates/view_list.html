@@ -15,7 +15,7 @@
 <br><br><br>
 
 {% if current_user.id in group_members_ids %}
-<a href="{{ url_for('add_task', list_id=list_id) }}" class="btn btn-dark">Add Task</a>
+<a href="{{ url_for('tasks.add_task', list_id=list_id) }}" class="btn btn-dark">Add Task</a>
 <a href="{{ url_for('view_list_group', list_id=list_id) }}" class="btn btn-dark">View List Group</a>
 <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling"
     aria-controls="offcanvasScrolling">Filters</button>
@@ -49,11 +49,12 @@
             <p class="btn btn-danger">Overdue</p>
             {% endif %}
         </td>
-        <td><a href="{{ url_for('edit_task', list_id=list_id, task_id=task.task_id )}}" class="btn btn-dark">Edit</a>
+        <td><a href="{{ url_for('tasks.edit_task', list_id=list_id, task_id=task.task_id )}}"
+                class="btn btn-dark">Edit</a>
         </td>
         {% if current_user.id == list.list_owner_id %}
         <td>
-            <form action="{{ url_for('delete_task', list_id=list_id, task_id=task.task_id )}}" method="post"
+            <form action="{{ url_for('tasks.delete_task', list_id=list_id, task_id=task.task_id )}}" method="post"
                 onsubmit="return confirm('Are you sure you wish to delete this task?');">
                 <input type="submit" class="btn btn-dark" value="Delete">
             </form>
@@ -63,7 +64,7 @@
     {% endfor %}
 </table>
 
-<a href="{{ url_for('add_task', list_id=list_id) }}" class="btn btn-dark">Add Task</a>
+<a href="{{ url_for('tasks.add_task', list_id=list_id) }}" class="btn btn-dark">Add Task</a>
 <a href="{{ url_for('view_list_group', list_id=list_id) }}" class="btn btn-dark">View List Group</a>
 <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling"
     aria-controls="offcanvasScrolling">Filters</button>

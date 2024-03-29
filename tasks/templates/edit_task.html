@@ -17,7 +17,7 @@
 
 {% if current_user.id in group_members_ids %}
 <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
-    <form action="/lists/{{ list_id }}/{{ task_id }}/edit" method="POST">
+    <form method="POST">
         {{ form.hidden_tag() }}
 
         {{ form.task_name.label(class="form-label") }}
@@ -33,7 +33,7 @@
         {{ form.finished(style="list-style:none", class="form-check") }}
         <br><br>
         {{ form.submit(class="btn btn-dark") }}
-        <a href="{{ url_for('view_list', list_id=list_id) }}" class="btn btn-dark">Back</a>
+        <a href="{{ url_for('lists.view_list', list_id=list_id) }}" class="btn btn-dark">Back</a>
     </form>
 </div>
 {% else %}
