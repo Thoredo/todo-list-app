@@ -20,9 +20,9 @@
 <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling"
     aria-controls="offcanvasScrolling">Filters</button>
 {% if current_user.id == list.list_owner_id %}
-<a href="{{ url_for('personal_lists') }}" class="btn btn-dark">Back</a>
+<a href="{{ url_for('lists.personal_lists') }}" class="btn btn-dark">Back</a>
 {% else %}
-<a href="{{ url_for('shared_lists') }}" class="btn btn-dark">Back</a>
+<a href="{{ url_for('lists.shared_lists') }}" class="btn btn-dark">Back</a>
 {% endif %}
 
 <br>
@@ -68,9 +68,9 @@
 <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling"
     aria-controls="offcanvasScrolling">Filters</button>
 {% if current_user.id == list.list_owner_id %}
-<a href="{{ url_for('personal_lists') }}" class="btn btn-dark">Back</a>
+<a href="{{ url_for('lists.personal_lists') }}" class="btn btn-dark">Back</a>
 {% else %}
-<a href="{{ url_for('shared_lists') }}" class="btn btn-dark">Back</a>
+<a href="{{ url_for('lists.shared_lists') }}" class="btn btn-dark">Back</a>
 {% endif %}
 
 {% else %}

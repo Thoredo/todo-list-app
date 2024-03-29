@@ -5,10 +5,10 @@ from forms.login import LoginForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
 
-auth = Blueprint("auth", __name__, template_folder="templates")
+auth_bp = Blueprint("auth", __name__, template_folder="templates")
 
 
-@auth.route("/account", methods=["GET", "POST"])
+@auth_bp.route("/account", methods=["GET", "POST"])
 @login_required
 def account():
     active_page = "account"
@@ -16,7 +16,7 @@ def account():
     return render_template("account.html", active_page=active_page)
 
 
-@auth.route("/delete/<int:id>", methods=["GET", "POST"])
+@auth_bp.route("/delete/<int:id>", methods=["GET", "POST"])
 def delete_account(id):
     user_to_delete = Users.query.get_or_404(id)
 
@@ -35,7 +35,7 @@ def delete_account(id):
         return render_template("delete.html")
 
 
-@auth.route("/edit_user/<int:id>", methods=["GET", "POST"])
+@auth_bp.route("/edit_user/<int:id>", methods=["GET", "POST"])
 @login_required
 def edit_user(id):
     form = RegisterForm()
@@ -61,7 +61,7 @@ def edit_user(id):
         )
 
 
-@auth.route("/login", methods=["GET", "POST"])
+@auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
     active_page = "login"
@@ -82,7 +82,7 @@ def login():
     return render_template("login.html", form=form, active_page=active_page)
 
 
-@auth.route("/logout", methods=["GET", "POST"])
+@auth_bp.route("/logout", methods=["GET", "POST"])
 @login_required
 def logout():
     logout_user()
@@ -90,7 +90,7 @@ def logout():
     return redirect(url_for("auth.login"))
 
 
-@auth.route("/register", methods=["GET", "POST"])
+@auth_bp.route("/register", methods=["GET", "POST"])
 def register():
     first_name = None
     last_name = None

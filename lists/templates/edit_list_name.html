@@ -24,7 +24,7 @@
         <br>
         {{ form.submit(class="btn btn-dark") }}
 
-        <a href="{{ url_for('lists') }}" class="btn btn-dark">Back</a>
+        <a href="{{ url_for('lists.lists') }}" class="btn btn-dark">Back</a>
     </form>
 
 </div>
@@ -33,7 +33,7 @@
     Sorry! You Can't Edit This List...
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
-<a href="{{ url_for('lists') }}" class="btn btn-dark">Back</a>
+<a href="{{ url_for('lists.lists') }}" class="btn btn-dark">Back</a>
 
 {% endif %}
 

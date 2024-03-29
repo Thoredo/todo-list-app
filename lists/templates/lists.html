@@ -23,7 +23,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Personal</h5>
                     <p class="card-text">Edit, view or remove your personal lists.</p>
-                    <a href="{{ url_for('personal_lists') }}" class="btn btn-primary">Personal Lists</a>
+                    <a href="{{ url_for('lists.personal_lists') }}" class="btn btn-primary">Personal Lists</a>
                 </div>
             </div>
         </div>
@@ -34,7 +34,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Shared</h5>
                     <p class="card-text">Edit or view lists that other people shared with you.</p>
-                    <a href="{{ url_for('shared_lists') }}" class="btn btn-primary">Shared Lists</a>
+                    <a href="{{ url_for('lists.shared_lists') }}" class="btn btn-primary">Shared Lists</a>
                 </div>
             </div>
         </div>
@@ -45,7 +45,7 @@
                 <div class="card-body">
                     <h5 class="card-title">New</h5>
                     <p class="card-text">Add a new personal or group list to your account.</p>
-                    <a href="{{ url_for('new_list') }}" class="btn btn-primary">New list</a>
+                    <a href="{{ url_for('lists.new_list') }}" class="btn btn-primary">New list</a>
                 </div>
             </div>
         </div>
