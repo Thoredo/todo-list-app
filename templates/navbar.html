@@ -15,13 +15,13 @@
                 <a class="nav-link {% if active_page == 'invites' %}active{% endif %}"
                     href="{{ url_for('group_invites') }}">Invites</a>
                 <a class="nav-link {% if active_page == 'account' %}active{% endif %}"
-                    href="{{ url_for('account') }}">Account</a>
-                <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    href="{{ url_for('auth.account') }}">Account</a>
+                <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
                 {% else %}
                 <a class="nav-link {% if active_page == 'login' %}active{% endif %}"
-                    href="{{ url_for('login') }}">Login</a>
+                    href="{{ url_for('auth.login') }}">Login</a>
                 <a class="nav-link {% if active_page == 'register' %}active{% endif %}"
-                    href="{{ url_for('register') }}">Register</a>
+                    href="{{ url_for('auth.register') }}">Register</a>
                 {% endif %}
             </div>
         </div>

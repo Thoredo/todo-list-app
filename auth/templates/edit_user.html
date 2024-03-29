@@ -18,7 +18,7 @@
 {% if id == current_user.id %}
 
 <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
-    <form action="/update/{{ current_user.id }}" method="POST">
+    <form action="/edit_user/{{ current_user.id }}" method="POST">
         {{ form.hidden_tag() }}
 
         {{ form.first_name.label(class="form-label") }}
