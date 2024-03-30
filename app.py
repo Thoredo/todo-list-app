@@ -4,10 +4,10 @@ from flask_login import LoginManager
 from dotenv import load_dotenv
 import os
 from database.tables import db, Users
-from auth.views import auth_bp
-from lists.views import lists_bp
-from tasks.views import tasks_bp
-from groups.views import groups_bp
+from blueprints.auth.views import auth_bp
+from blueprints.lists.views import lists_bp
+from blueprints.tasks.views import tasks_bp
+from blueprints.groups.views import groups_bp
 
 load_dotenv()
 

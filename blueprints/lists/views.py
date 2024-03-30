@@ -42,13 +42,13 @@ def delete_list(list_id):
 
             flash("List Deleted Successfully!!")
 
-            return redirect(url_for("personal_lists"))
+            return redirect(url_for("lists.personal_lists"))
         except:
             flash("Error! Looks like there was a problem.... Try Again!")
-            return redirect(url_for("personal_lists"))
+            return redirect(url_for("lists.personal_lists"))
     else:
         flash("Please Don't Try To Delete Other Peoples Lists. That Is Not Nice!")
-        return redirect(url_for("personal_lists"))
+        return redirect(url_for("lists.personal_lists"))
 
 
 @lists_bp.route("/<int:list_id>/edit_name", methods=["GET", "POST"])
@@ -61,10 +61,10 @@ def edit_list_name(list_id):
         try:
             db.session.commit()
             flash("List Name Updated Successfully!")
-            return redirect(url_for("personal_lists"))
+            return redirect(url_for("lists.personal_lists"))
         except:
             flash("Error! Looks like there was a problem.... Try Again!")
-            return redirect(url_for("personal_lists"))
+            return redirect(url_for("lists.personal_lists"))
     else:
         return render_template(
             "edit_list_name.html", form=form, list_to_edit=list_to_edit
