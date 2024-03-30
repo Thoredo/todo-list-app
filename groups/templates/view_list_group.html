@@ -14,7 +14,7 @@
 {% endfor %}
 <br>
 {% if current_user.id == list.list_owner_id %}
-<a href="{{ url_for('add_group_member', list_id=list_id) }}" class="btn btn-dark">Invite Users</a>
+<a href="{{ url_for('groups.add_group_member', list_id=list_id) }}" class="btn btn-dark">Invite Users</a>
 {% endif %}
 <a href="{{ url_for('lists.view_list', list_id=list.list_id) }}" class="btn btn-dark">Back</a>
 <br>
@@ -31,12 +31,12 @@
         <td>{{ member.email }}</td>
         {% if member.id != list.list_owner_id %}
         {% if current_user.id == list.list_owner_id %}
-        <td><a href="{{ url_for('remove_member', list_id=list_id, user_id=member.id) }}"
+        <td><a href="{{ url_for('groups.remove_member', list_id=list_id, user_id=member.id) }}"
                 class="btn btn-danger">Remove</a>
         </td>
         {% endif %}
         {% if current_user.id == member.id %}
-        <td><a href="{{ url_for('leave_group', list_id=list_id) }}" class="btn btn-danger">Leave Group</a></td>
+        <td><a href="{{ url_for('groups.leave_group', list_id=list_id) }}" class="btn btn-danger">Leave Group</a></td>
         {% endif %}
         {% if current_user.id == list.list_owner_id %}
         <td><a href="#" class="btn btn-danger">Transfer Ownership</a></td>

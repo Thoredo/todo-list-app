@@ -16,7 +16,7 @@
 
 {% if current_user.id in group_members_ids %}
 <a href="{{ url_for('tasks.add_task', list_id=list_id) }}" class="btn btn-dark">Add Task</a>
-<a href="{{ url_for('view_list_group', list_id=list_id) }}" class="btn btn-dark">View List Group</a>
+<a href="{{ url_for('groups.view_list_group', list_id=list_id) }}" class="btn btn-dark">View List Group</a>
 <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling"
     aria-controls="offcanvasScrolling">Filters</button>
 {% if current_user.id == list.list_owner_id %}
@@ -65,7 +65,7 @@
 </table>
 
 <a href="{{ url_for('tasks.add_task', list_id=list_id) }}" class="btn btn-dark">Add Task</a>
-<a href="{{ url_for('view_list_group', list_id=list_id) }}" class="btn btn-dark">View List Group</a>
+<a href="{{ url_for('groups.view_list_group', list_id=list_id) }}" class="btn btn-dark">View List Group</a>
 <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling"
     aria-controls="offcanvasScrolling">Filters</button>
 {% if current_user.id == list.list_owner_id %}
