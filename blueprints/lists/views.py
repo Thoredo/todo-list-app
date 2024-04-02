@@ -1,8 +1,9 @@
-from flask import Blueprint, render_template, flash, redirect, url_for, request
+from flask import Blueprint, render_template, flash, redirect, url_for, request, session
 from flask_login import login_required, current_user
 from database.tables import db, Lists, Tasks, GroupMembers, Groups, Users
 from forms.new_list import NewListForm
 from datetime import datetime
+from sqlalchemy import case
 
 lists_bp = Blueprint("lists", __name__, template_folder="templates")
 
@@ -146,15 +147,111 @@ def shared_lists():
 @lists_bp.route("/<int:list_id>", methods=["GET", "POST"])
 @login_required
 def view_list(list_id):
+
     list = db.session.get(Lists, list_id)
     group = GroupMembers.query.filter_by(group_id=list.group_id)
     group_members_ids = []
     for member in group:
         user_info = db.session.get(Users, member.user_id)
         group_members_ids.append(user_info.id)
-    tasks = Tasks.query.filter_by(list_id=list.list_id)
+
+    # Check if sorting directions are stored in session
+    if "colum_directions" not in session:
+        session["colum_directions"] = {
+            "name_direction": "asc",
+            "priority_direction": "asc",
+            "date_direction": "asc",
+            "status_direction": "asc",
+        }
+
+    # Retrieve sorting directions from session
+    colum_directions = session["colum_directions"]
+
+    column = request.args.get("column", "task_name")
+    direction = request.args.get("direction", "asc")
+
     date = datetime.now()
     today = date.date()
+
+    # Fetch tasks from the database based on sorting parameters
+    if column == "priority":
+        # Define the custom sort orders
+        descending_priority_order = {"high": 1, "medium": 2, "low": 3}
+        ascending_priority_order = {"low": 1, "medium": 2, "high": 3}
+
+        # Create a case statement for descending sort order
+        descending_priority_case = case(
+            descending_priority_order,
+            value=Tasks.priority,
+            else_=len(descending_priority_order) + 1,
+        )
+
+        # Create a case statement for ascending sort order
+        ascending_priority_case = case(
+            ascending_priority_order,
+            value=Tasks.priority,
+            else_=len(ascending_priority_order) + 1,
+        )
+
+        if direction == "asc":
+            tasks = (
+                Tasks.query.filter_by(list_id=list_id)
+                .order_by(ascending_priority_case)
+                .all()
+            )
+            colum_directions["priority_direction"] = "asc"
+        else:
+            tasks = (
+                Tasks.query.filter_by(list_id=list_id)
+                .order_by(descending_priority_case)
+                .all()
+            )
+            colum_directions["priority_direction"] = "desc"
+    elif column == "due_date":
+        if direction == "asc":
+            tasks = (
+                Tasks.query.filter_by(list_id=list_id)
+                .order_by(Tasks.due_date.asc())
+                .all()
+            )
+            colum_directions["date_direction"] = "asc"
+        else:
+            tasks = (
+                Tasks.query.filter_by(list_id=list_id)
+                .order_by(Tasks.due_date.desc())
+                .all()
+            )
+            colum_directions["date_direction"] = "desc"
+    elif column == "status":
+        if direction == "asc":
+            tasks = (
+                Tasks.query.filter_by(list_id=list_id)
+                .order_by(Tasks.finished.asc(), Tasks.due_date.asc())
+                .all()
+            )
+            colum_directions["status_direction"] = "asc"
+        else:
+            tasks = (
+                Tasks.query.filter_by(list_id=list_id)
+                .order_by(Tasks.finished.desc(), Tasks.due_date.desc())
+                .all()
+            )
+            colum_directions["status_direction"] = "desc"
+    else:  # Default to sorting by task name
+        if direction == "asc":
+            tasks = (
+                Tasks.query.filter_by(list_id=list_id)
+                .order_by(Tasks.task_name.asc())
+                .all()
+            )
+            colum_directions["name_direction"] == "asc"
+        else:
+            tasks = (
+                Tasks.query.filter_by(list_id=list_id)
+                .order_by(Tasks.task_name.desc())
+                .all()
+            )
+            colum_directions["name_direction"] = "desc"
 
     return render_template(
         "view_list.html",
@@ -163,4 +260,5 @@ def view_list(list_id):
         list_id=list_id,
         tasks=tasks,
         today=today,
+        colum_directions=colum_directions,
     )

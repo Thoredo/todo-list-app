@@ -27,11 +27,62 @@
 
 <br>
 <table class="table table-striped table-hover">
-    <th scope="col">Task Name</th>
-    <th scope="col">Priority</th>
-    <th scope="col">Due Date</th>
-    <th scope="col">Status</th>
-    <th scope="col"></th>
+    <thead>
+        <tr>
+            {% if colum_directions["name_direction"] == "asc" %}
+            <th scope="col">
+                <a href="{{ url_for('lists.view_list', list_id=list_id, column='task_name', direction='desc') }}">
+                    Task Name <span>&#9650;</span>
+                </a>
+            </th>
+            {% else %}
+            <th scope="col">
+                <a href="{{ url_for('lists.view_list', list_id=list_id, column='task_name', direction='asc') }}">
+                    Task Name <span>&#9660;</span>
+                </a>
+            </th>
+            {% endif %}
+            {% if colum_directions["priority_direction"] == "asc" %}
+            <th scope="col">
+                <a href="{{ url_for('lists.view_list', list_id=list_id, column='priority', direction='desc') }}">
+                    Priority <span>&#9650;</span>
+                </a>
+            </th>
+            {% else %}
+            <th scope="col">
+                <a href="{{ url_for('lists.view_list', list_id=list_id, column='priority', direction='asc') }}">
+                    Priority <span>&#9660;</span>
+                </a>
+            </th>
+            {% endif %}
+            {% if colum_directions["date_direction"] == "asc" %}
+            <th scope="col">
+                <a href="{{ url_for('lists.view_list', list_id=list_id, column='due_date', direction='desc') }}">
+                    Due Date <span>&#9650;</span>
+                </a>
+            </th>
+            {% else %}
+            <th scope="col">
+                <a href="{{ url_for('lists.view_list', list_id=list_id, column='due_date', direction='asc') }}">
+                    Due Date <span>&#9660;</span>
+                </a>
+            </th>
+            {% endif %}
+            {% if colum_directions["status_direction"] == "asc" %}
+            <th scope="col">
+                <a href="{{ url_for('lists.view_list', list_id=list_id, column='status', direction='desc') }}">
+                    Status <span>&#9650;</span>
+                </a>
+            </th>
+            {% else %}
+            <th scope="col">
+                <a href="{{ url_for('lists.view_list', list_id=list_id, column='status', direction='asc') }}">
+                    Status <span>&#9660;</span>
+                </a>
+            </th>
+            {% endif %}
+        </tr>
+    </thead>
     {% for task in tasks %}
     <tr class="task-row"
         data-status="{% if task.finished %}finished{% elif task.due_date.date() > today %}in_progress{% elif task.due_date.date() == today %}due_today{% else %}overdue{% endif %}"
