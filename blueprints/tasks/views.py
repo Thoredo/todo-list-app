@@ -61,24 +61,10 @@ def delete_task(list_id, task_id):
         db.session.delete(task_to_delete)
         db.session.commit()
         flash("Task Deleted Successfully!!")
-        return render_template(
-            "view_list.html",
-            list=list,
-            group_members_ids=group_members_ids,
-            list_id=list_id,
-            tasks=tasks,
-            today=today,
-        )
+        return redirect(url_for("lists.view_list", list_id=list_id))
     except:
         flash("Error! Looks like there was a problem.... Try Again!")
-        return render_template(
-            "view_list.html",
-            list=list,
-            group=group,
-            list_id=list_id,
-            tasks=tasks,
-            today=today,
-        )
+        return redirect(url_for("lists.view_list", list_id=list_id))
 
 
 @tasks_bp.route("/<int:list_id>/<int:task_id>/edit", methods=["GET", "POST"])
