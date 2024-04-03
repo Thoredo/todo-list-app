@@ -1,8 +1,33 @@
 document.addEventListener("DOMContentLoaded", function () {
-    var statusCheckboxes = document.querySelectorAll('.status-checkbox');
     var statusAllCheckbox = document.getElementById('status_all');
-    var priorityCheckboxes = document.querySelectorAll('.priority-checkbox');
     var priorityAllCheckbox = document.getElementById('priority_all');
+    var statusCheckboxes = document.querySelectorAll('.status-checkbox');
+    var priorityCheckboxes = document.querySelectorAll('.priority-checkbox');
+
+    if (localStorage.getItem('statusAllCheckboxChecked')) {
+        statusAllCheckbox.checked = JSON.parse(localStorage.getItem('statusAllCheckboxChecked'));
+    }
+    if (localStorage.getItem('priorityAllCheckboxChecked')) {
+        priorityAllCheckbox.checked = JSON.parse(localStorage.getItem('priorityAllCheckboxChecked'));
+    }
+
+    // Retrieve checkbox state from localStorage if available
+    var checkedStatusCheckboxes = localStorage.getItem('checkedStatusCheckboxes') ? JSON.parse(localStorage.getItem('checkedStatusCheckboxes')) : null;
+    var checkedPriorityCheckboxes = localStorage.getItem('checkedPriorityCheckboxes') ? JSON.parse(localStorage.getItem('checkedPriorityCheckboxes')) : null;
+
+    // Restore checkbox states if available
+    if (checkedStatusCheckboxes && checkedStatusCheckboxes.length === statusCheckboxes.length) {
+        statusCheckboxes.forEach(function (checkbox, index) {
+            checkbox.checked = checkedStatusCheckboxes[index];
+        });
+    }
+    if (checkedPriorityCheckboxes && checkedPriorityCheckboxes.length === priorityCheckboxes.length) {
+        priorityCheckboxes.forEach(function (checkbox, index) {
+            checkbox.checked = checkedPriorityCheckboxes[index];
+        });
+    }
+
+
 
     statusCheckboxes.forEach(function (checkbox) {
         checkbox.addEventListener('change', function () {
@@ -46,6 +71,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     function updateTasks() {
+        localStorage.setItem('statusAllCheckboxChecked', statusAllCheckbox.checked);
+        localStorage.setItem('priorityAllCheckboxChecked', priorityAllCheckbox.checked);
+        localStorage.setItem('checkedStatusCheckboxes', JSON.stringify(Array.from(statusCheckboxes).map(function (checkbox) {
+            return checkbox.checked;
+        })));
+        localStorage.setItem('checkedPriorityCheckboxes', JSON.stringify(Array.from(priorityCheckboxes).map(function (checkbox) {
+            return checkbox.checked;
+        })));
+
         var selectedStatuses = [];
         statusCheckboxes.forEach(function (checkbox) {
             if (checkbox.checked) {
@@ -76,4 +110,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+    console.log(statusCheckboxes)
+    updateTasks();
 });
