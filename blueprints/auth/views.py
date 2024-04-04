@@ -4,6 +4,7 @@ from forms.register_form import RegisterForm
 from forms.login import LoginForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
+from active_invites import get_amount_invites
 
 auth_bp = Blueprint("auth", __name__, template_folder="templates")
 
@@ -12,13 +13,17 @@ auth_bp = Blueprint("auth", __name__, template_folder="templates")
 @login_required
 def account():
     active_page = "account"
+    active_invites = get_amount_invites()
 
-    return render_template("account.html", active_page=active_page)
+    return render_template(
+        "account.html", active_page=active_page, active_invites=active_invites
+    )
 
 
 @auth_bp.route("/delete/<int:id>", methods=["GET", "POST"])
 def delete_account(id):
     user_to_delete = Users.query.get_or_404(id)
+    active_invites = get_amount_invites()
 
     if current_user.id == user_to_delete.id:
         try:
@@ -26,13 +31,13 @@ def delete_account(id):
             db.session.commit()
             flash("User Deleted Successfully!!")
 
-            return render_template("delete.html")
+            return render_template("delete.html", active_invites=active_invites)
         except:
             flash("Error! Looks like there was a problem.... Try Again!")
-            return render_template("delete.html")
+            return render_template("delete.html", active_invites=active_invites)
     else:
         flash("Please Don't Try To Delete Other Peoples Account. That Is Not Nice!")
-        return render_template("delete.html")
+        return render_template("delete.html", active_invites=active_invites)
 
 
 @auth_bp.route("/edit_user/<int:id>", methods=["GET", "POST"])
@@ -40,6 +45,7 @@ def delete_account(id):
 def edit_user(id):
     form = RegisterForm()
     user_to_update = Users.query.get_or_404(id)
+    active_invites = get_amount_invites()
     if request.method == "POST":
         user_to_update.first_name = request.form["first_name"]
         user_to_update.last_name = request.form["last_name"]
@@ -48,16 +54,27 @@ def edit_user(id):
             db.session.commit()
             flash("User Updated Successfully!")
             return render_template(
-                "edit_user.html", form=form, user_to_update=user_to_update, id=id
+                "edit_user.html",
+                form=form,
+                user_to_update=user_to_update,
+                id=id,
+                active_invites=active_invites,
             )
         except:
             flash("Error! Looks like there was a problem.... Try Again!")
             return render_template(
-                "edit_user.html", form=form, user_to_update=user_to_update
+                "edit_user.html",
+                form=form,
+                user_to_update=user_to_update,
+                active_invites=active_invites,
             )
     else:
         return render_template(
-            "edit_user.html", form=form, user_to_update=user_to_update, id=id
+            "edit_user.html",
+            form=form,
+            user_to_update=user_to_update,
+            id=id,
+            active_invites=active_invites,
         )
 
 

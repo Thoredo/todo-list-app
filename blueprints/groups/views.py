@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from database.tables import db, GroupMembers, Users, Lists, GroupInvites, Tasks
 from forms.add_group_member import AddGroupMemberForm
 from datetime import datetime
+from active_invites import get_amount_invites
 
 groups_bp = Blueprint("groups", __name__, template_folder="templates")
 
@@ -12,6 +13,7 @@ groups_bp = Blueprint("groups", __name__, template_folder="templates")
 def add_group_member(list_id):
     form = AddGroupMemberForm()
     list = db.session.get(Lists, list_id)
+    active_invites = get_amount_invites()
 
     if form.validate_on_submit():
         recipient = Users.query.filter_by(username=form.username.data).first()
@@ -37,7 +39,9 @@ def add_group_member(list_id):
                 flash("Invite sent successfully!", "success")
         else:
             flash("User not found!", "danger")
-    return render_template("add_member.html", form=form, list_id=list_id)
+    return render_template(
+        "add_member.html", form=form, list_id=list_id, active_invites=active_invites
+    )
 
 
 @groups_bp.route("/invites/<int:list_id>/accept")
@@ -85,6 +89,7 @@ def group_invites():
     active_page = "invites"
     invites = GroupInvites.query.filter_by(recipient_id=current_user.id).all()
     all_lists = []
+    active_invites = get_amount_invites()
     if invites:
         for invite in invites:
             list = db.session.get(Lists, invite.list_id)
@@ -95,7 +100,12 @@ def group_invites():
             all_lists.append(
                 {"list_name": list_name, "sender_name": sender_name, "list_id": list_id}
             )
-    return render_template("invites.html", active_page=active_page, all_lists=all_lists)
+    return render_template(
+        "invites.html",
+        active_page=active_page,
+        all_lists=all_lists,
+        active_invites=active_invites,
+    )
 
 
 @groups_bp.route("/<int:list_id>/leave")
@@ -109,39 +119,10 @@ def leave_group(list_id):
         db.session.delete(member_leaving)
         db.session.commit()
         flash("Succesfully Left Group!!")
-        lists_with_active_tasks = []
-        groups = GroupMembers.query.filter_by(user_id=current_user.id)
-        group_ids = [group.group_id for group in groups]
-        lists = Lists.query.filter(
-            Lists.group_id.in_(group_ids), Lists.list_owner_id != current_user.id
-        )
-        for list in lists:
-            active_tasks_count = Tasks.query.filter_by(
-                list_id=list.list_id, finished=False
-            ).count()
-            lists_with_active_tasks.append((list, active_tasks_count))
-        return render_template(
-            "shared_lists.html",
-            lists_with_active_tasks=lists_with_active_tasks,
-        )
+        return redirect(url_for("lists.shared_lists"))
     except:
         flash("There was an error leaving the group, try again!!")
-        group = GroupMembers.query.filter_by(group_id=list.group_id)
-        group_members_ids = []
-        for member in group:
-            user_info = db.session.get(Users, member.user_id)
-            group_members_ids.append(user_info.id)
-        tasks = Tasks.query.filter_by(list_id=list.list_id)
-        date = datetime.now()
-        today = date.date()
-        return render_template(
-            "view_list.html",
-            list=list,
-            group_members_ids=group_members_ids,
-            list_id=list_id,
-            tasks=tasks,
-            today=today,
-        )
+        return redirect(url_for("lists.view_list"))
 
 
 @groups_bp.route("/<int:list_id>/group/remove_member/<int:user_id>")
@@ -162,24 +143,10 @@ def remove_member(list_id, user_id):
         db.session.delete(user_to_remove)
         db.session.commit()
         flash("User Removed Successfully!!")
-        group_members = []
-        for member in group:
-            user_info = db.session.get(Users, member.user_id)
-            group_members.append(user_info)
-        return render_template(
-            "view_list_group.html",
-            group_members=group_members,
-            list_id=list_id,
-            list=list,
-        )
+        return redirect(url_for("groups.view_list_group", list_id=list.list_id))
     except:
         flash("Error! Looks like there was a problem.... Try Again!")
-        return render_template(
-            "view_list_group.html",
-            group_members=group_members,
-            list_id=list_id,
-            list=list,
-        )
+        return redirect(url_for("groups.view_list_group", list_id=list.list_id))
 
 
 @groups_bp.route("/<int:list_id>")
@@ -191,6 +158,11 @@ def view_list_group(list_id):
     for member in group:
         user_info = db.session.get(Users, member.user_id)
         group_members.append(user_info)
+    active_invites = get_amount_invites()
     return render_template(
-        "view_list_group.html", group_members=group_members, list_id=list_id, list=list
+        "view_list_group.html",
+        group_members=group_members,
+        list_id=list_id,
+        list=list,
+        active_invites=active_invites,
     )

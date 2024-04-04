@@ -1,6 +1,6 @@
 from flask import Flask, render_template
 from flask_migrate import Migrate
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from dotenv import load_dotenv
 import os
 from database.tables import db, Users
@@ -8,6 +8,7 @@ from blueprints.auth.views import auth_bp
 from blueprints.lists.views import lists_bp
 from blueprints.tasks.views import tasks_bp
 from blueprints.groups.views import groups_bp
+from active_invites import get_amount_invites
 
 load_dotenv()
 
@@ -42,8 +43,13 @@ def load_user(user_id):
 @app.route("/")
 def index():
     active_page = "index"
+    active_invites = None
+    if current_user.is_authenticated:
+        active_invites = get_amount_invites()
 
-    return render_template("index.html", active_page=active_page)
+    return render_template(
+        "index.html", active_page=active_page, active_invites=active_invites
+    )
 
 
 if __name__ == "__main__":

@@ -4,6 +4,7 @@ from database.tables import db, Lists, Tasks, GroupMembers, Groups, Users
 from forms.new_list import NewListForm
 from datetime import datetime
 from sqlalchemy import case
+from active_invites import get_amount_invites
 
 lists_bp = Blueprint("lists", __name__, template_folder="templates")
 
@@ -68,8 +69,12 @@ def edit_list_name(list_id):
             flash("Error! Looks like there was a problem.... Try Again!")
             return redirect(url_for("lists.personal_lists"))
     else:
+        active_invites = get_amount_invites()
         return render_template(
-            "edit_list_name.html", form=form, list_to_edit=list_to_edit
+            "edit_list_name.html",
+            form=form,
+            list_to_edit=list_to_edit,
+            active_invites=active_invites,
         )
 
 
@@ -77,7 +82,11 @@ def edit_list_name(list_id):
 @login_required
 def lists():
     active_page = "lists"
-    return render_template("/lists.html", active_page=active_page)
+    active_invites = get_amount_invites()
+
+    return render_template(
+        "/lists.html", active_page=active_page, active_invites=active_invites
+    )
 
 
 @lists_bp.route("/new_list", methods=["GET", "POST"])
@@ -106,7 +115,9 @@ def new_list():
         db.session.add(new_list)
         db.session.commit()
         flash("List Created!")
-    return render_template("new_list.html", form=form)
+
+        active_invites = get_amount_invites()
+    return render_template("new_list.html", form=form, active_invites=active_invites)
 
 
 @lists_bp.route("/personal_lists")
@@ -119,9 +130,13 @@ def personal_lists():
             list_id=list.list_id, finished=False
         ).count()
         lists_with_active_tasks.append((list, active_tasks_count))
+
+    active_invites = get_amount_invites()
+
     return render_template(
         "personal_lists.html",
         lists_with_active_tasks=lists_with_active_tasks,
+        active_invites=active_invites,
     )
 
 
@@ -139,9 +154,13 @@ def shared_lists():
             list_id=list.list_id, finished=False
         ).count()
         lists_with_active_tasks.append((list, active_tasks_count))
+
+    active_invites = get_amount_invites()
+
     return render_template(
         "shared_lists.html",
         lists_with_active_tasks=lists_with_active_tasks,
+        active_invites=active_invites,
     )
 
 
@@ -184,6 +203,8 @@ def view_list(list_id):
     else:  # Default to sorting by task name
         tasks = handle_name_sort(direction, column_directions, list_id)
 
+    active_invites = get_amount_invites()
+
     return render_template(
         "view_list.html",
         list=list,
@@ -192,6 +213,7 @@ def view_list(list_id):
         tasks=tasks,
         today=today,
         colum_directions=column_directions,
+        active_invites=active_invites,
     )
 
 
