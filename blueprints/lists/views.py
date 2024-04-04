@@ -93,6 +93,7 @@ def lists():
 @login_required
 def new_list():
     form = NewListForm()
+    active_invites = get_amount_invites()
     if form.validate_on_submit():
         # Create new group
         new_group = Groups()
@@ -115,8 +116,6 @@ def new_list():
         db.session.add(new_list)
         db.session.commit()
         flash("List Created!")
-
-        active_invites = get_amount_invites()
     return render_template("new_list.html", form=form, active_invites=active_invites)
 
 

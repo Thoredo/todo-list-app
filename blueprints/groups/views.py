@@ -125,6 +125,25 @@ def leave_group(list_id):
         return redirect(url_for("lists.view_list"))
 
 
+@groups_bp.route(
+    "/<int:list_id>/<int:new_owner_id>/transfer_ownership", methods=["GET", "POST"]
+)
+@login_required
+def transfer_list_ownership(list_id, new_owner_id):
+    list_to_transfer = Lists.query.get_or_404(list_id)
+
+    # Ensure the current user is the owner of the list
+    if current_user.id == list_to_transfer.list_owner_id:
+        # Transfer ownership by updating the list's owner ID
+        list_to_transfer.list_owner_id = new_owner_id
+        db.session.commit()
+        flash("Ownership of the list has been transferred successfully!")
+    else:
+        flash("You don't have permission to transfer ownership of this list.")
+
+    return redirect(url_for("groups.view_list_group", list_id=list_id))
+
+
 @groups_bp.route("/<int:list_id>/group/remove_member/<int:user_id>")
 @login_required
 def remove_member(list_id, user_id):

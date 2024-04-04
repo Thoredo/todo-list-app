@@ -39,7 +39,8 @@
         <td><a href="{{ url_for('groups.leave_group', list_id=list_id) }}" class="btn btn-danger">Leave Group</a></td>
         {% endif %}
         {% if current_user.id == list.list_owner_id %}
-        <td><a href="#" class="btn btn-danger">Transfer Ownership</a></td>
+        <td><a href="{{ url_for('groups.transfer_list_ownership', list_id=list_id, new_owner_id=member.id) }}"
+                class="btn btn-danger">Transfer Ownership</a></td>
         {% endif %}
         {% endif %}
     </tr>
