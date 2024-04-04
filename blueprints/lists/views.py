@@ -30,14 +30,15 @@ def delete_list(list_id):
                 db.session.delete(member)
             db.session.commit()
 
+            # Get group id
+            group_id = list_to_delete.group_id
+
             # Remove the list
             db.session.delete(list_to_delete)
             db.session.commit()
 
             # Remove the group connected to the list
-            group_to_delete = Groups.query.filter_by(
-                group_id=list_to_delete.group_id
-            ).all()
+            group_to_delete = Groups.query.filter_by(group_id=group_id).first()
             db.session.delete(group_to_delete)
             db.session.commit()
 
