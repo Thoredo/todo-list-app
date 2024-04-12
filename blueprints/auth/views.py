@@ -5,6 +5,7 @@ from forms.login import LoginForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
 from active_invites import get_amount_invites
+from sqlalchemy.exc import PendingRollbackError
 
 auth_bp = Blueprint("auth", __name__, template_folder="templates")
 
@@ -84,17 +85,22 @@ def login():
     active_page = "login"
 
     if form.validate_on_submit():
-        # Lookup user
-        user = Users.query.filter_by(username=form.username.data).first()
-        if user:
-            # Check the hash
-            if check_password_hash(user.password_hash, form.password.data):
-                login_user(user)
-                return redirect(url_for("auth.account"))
+        try:
+            # Lookup user
+            user = Users.query.filter_by(username=form.username.data).first()
+            if user:
+                # Check the hash
+                if check_password_hash(user.password_hash, form.password.data):
+                    login_user(user)
+                    return redirect(url_for("auth.account"))
+                else:
+                    flash("Wrong Password - Try Again!")
             else:
-                flash("Wrong Password - Try Again!")
-        else:
-            flash("That Username Doesn't Exist! Try Again!")
+                flash("That Username Doesn't Exist! Try Again!")
+        except PendingRollbackError:
+            # If a pending rollback error occurs, roll back the transaction
+            db.session.rollback()
+            flash("An error occurred while logging in. Please try again.")
 
     return render_template("login.html", form=form, active_page=active_page)
 
